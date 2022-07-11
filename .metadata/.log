@@ -1,0 +1,18 @@
+!SESSION 2022-07-11 17:12:40.575 -----------------------------------------------
+eclipse.buildId=${build.id}
+java.version=17.0.3
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=win32, ARCH=x86_64, WS=win32, NL=ko_KR
+Command-line arguments:  -os win32 -ws win32 -arch x86_64 -data @noDefault
+
+!ENTRY org.eclipse.core.jobs 4 2 2022-07-11 17:17:10.827
+!MESSAGE An internal error occurred during: "Xtext validation".
+!STACK 0
+java.lang.NullPointerException: Cannot invoke "org.eclipse.xtext.resource.XtextResource.isValidationDisabled()" because "<parameter1>" is null
+	at msi.gama.lang.gaml.ui.editor.GamlEditor$2.lambda$0(GamlEditor.java:453)
+	at org.eclipse.xtext.resource.OutdatedStateManager.exec(OutdatedStateManager.java:70)
+	at org.eclipse.xtext.ui.editor.model.XtextDocument$XtextDocumentLocker.internalReadOnly(XtextDocument.java:525)
+	at org.eclipse.xtext.ui.editor.model.XtextDocument$XtextDocumentLocker.readOnly(XtextDocument.java:497)
+	at org.eclipse.xtext.ui.editor.model.XtextDocument.readOnly(XtextDocument.java:136)
+	at msi.gama.lang.gaml.ui.editor.GamlEditor$2.run(GamlEditor.java:452)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:63)
