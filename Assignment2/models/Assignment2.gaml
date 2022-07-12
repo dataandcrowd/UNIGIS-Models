@@ -17,10 +17,11 @@ global {
 	
 	
 	// Undone task: I want to find the maximum value of the DEM file.
-	// 
+	 
+	//
+//		
 	
-	
-	init {
+	init {	
 		ask cell {
 			float r;
 			float g;
@@ -36,8 +37,13 @@ global {
 			}
 			self.color <- rgb(r, g, b);
 		}
+			
+		float highestcell <- cell max_of (each.grid_value);	
+	//	ask highestcell {
+//		color <- rgb(0,150,0);
+ //   	grid_value <- 500.0;	
+//		}
 	}
-	
 }
 
 grid cell file: dem_file {
