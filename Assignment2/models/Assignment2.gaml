@@ -15,11 +15,9 @@ global {
 	//we use the dem file to initialize the world environment
 	geometry shape <- envelope(dem_file);
 	
-	
 	// Undone task: I want to find the maximum value of the DEM file.
-	 
-	//
-//		
+	float highestcell <- cell max_of (each.grid_value);	
+	// where is the highest cell
 	
 	init {	
 		ask cell {
@@ -38,13 +36,16 @@ global {
 			self.color <- rgb(r, g, b);
 		}
 			
-		float highestcell <- cell max_of (each.grid_value);	
+		write "The agent with the maximum value of val is: " + highestcell;	
+		
 	//	ask highestcell {
 //		color <- rgb(0,150,0);
  //   	grid_value <- 500.0;	
 //		}
 	}
 }
+
+
 
 grid cell file: dem_file {
   // diffuse water
