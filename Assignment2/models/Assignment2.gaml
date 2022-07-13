@@ -17,7 +17,12 @@ global {
 	
 	// Undone task: I want to find the maximum value of the DEM file.
 	float highestcell <- cell max_of (each.grid_value);	
-	// where is the highest cell
+	list<cell> newcell <- cell where (each.grid_value=highestcell) ;
+	
+ 
+	//list<int> waterfall <- [(grid_x of newcell[1]), (grid_y of newcell[1])];
+	
+	
 	
 	init {	
 		ask cell {
@@ -37,11 +42,13 @@ global {
 		}
 			
 		write "The agent with the maximum value of val is: " + highestcell;	
+		//write (grid_x of newcell[1]); write (grid_y of newcell[1]) ;
+		//write waterfall;
 		
-	//	ask highestcell {
-//		color <- rgb(0,150,0);
- //   	grid_value <- 500.0;	
-//		}
+		ask one_of (newcell){
+self.color <- rgb(0,150,0);
+}
+
 	}
 }
 
@@ -56,11 +63,14 @@ grid cell file: dem_file {
         myself.grid_value <- myself.grid_value - 5;
       }
     }
+    
     do update_colour;
   } 
   // show grid values in shades of blue
   action update_colour {
     color <- rgb([0,0,int(grid_value)]);    
+  
+  
   }
 }
 

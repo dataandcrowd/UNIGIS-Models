@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete 3 resources" deleteContents="false" description="Delete 3 resources" element1="/Assignment1/models/Segregation (Agents).gaml" element2="/Assignment1/models/Segregation (Cellular Automata).gaml" element3="/Assignment1/models/Segregation (Google Map).gaml" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="3" stamp="1657618373500"/>&#x0A;<refactoring comment="Delete resource &apos;GAMA_Project&apos;" deleteContents="false" description="Delete resource &apos;GAMA_Project&apos;" element1="/GAMA_Project" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1657621781260"/>
-</session>
