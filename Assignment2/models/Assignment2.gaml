@@ -25,32 +25,37 @@ global {
 	
 	
 	init {	
-		ask cell {
-			float r;
-			float g;
-			float b;
-			if (grid_value < 20) {
-				r <- 76 + (26 * (grid_value - 7) / 13);
-				g <- 153 - (51 * (grid_value - 7) / 13);
-				b <- 0.0;
-			} else {
-				r <- 102 + (122 * (grid_value - 20) / 19);
-				g <- 51 + (173 * (grid_value - 20) / 19);
-				b <- 224 * (grid_value - 20) / 19;
-			}
-			self.color <- rgb(r, g, b);
-		}
+		//ask cell {
+		//	float r;
+		//	float g;
+		//	float b;
+		//	if (grid_value < 20) {
+		//		r <- 76 + (26 * (grid_value - 7) / 13);
+		//		g <- 153 - (51 * (grid_value - 7) / 13);
+		//		b <- 0.0;
+		//	} else {
+		//		r <- 102 + (122 * (grid_value - 20) / 19);
+		//		g <- 51 + (173 * (grid_value - 20) / 19);
+		//		b <- 224 * (grid_value - 20) / 19;
+		//	}
+		//	self.color <- rgb(r, g, b);
+		//}
 			
 		write "The agent with the maximum value of val is: " + highestcell;	
 		//write (grid_x of newcell[1]); write (grid_y of newcell[1]) ;
 		//write waterfall;
 		
 		ask one_of (newcell){
-self.color <- rgb(0,150,0);
+				self.color <- rgb(0,150,0);
+				grid_value <- 10000.0;
+					}
+		}
+reflex stop_simulation when: (time = 300) {
+    do pause ;
+    }
+
 }
 
-	}
-}
 
 
 
@@ -59,8 +64,8 @@ grid cell file: dem_file {
   reflex diffusion {
     if grid_value > 150.0 {
       ask neighbors {
-        grid_value <- grid_value + 5;
-        myself.grid_value <- myself.grid_value - 5;
+        grid_value <- grid_value + 50;
+        myself.grid_value <- myself.grid_value - 50;
       }
     }
     
@@ -75,7 +80,7 @@ grid cell file: dem_file {
 }
 
 // Define an experiment that visualises the CA 
-experiment simulation type: gui {
+experiment Runoff_Cambridge type: gui {
   output {
     display myMap  {
       grid cell border:#grey;
@@ -83,15 +88,15 @@ experiment simulation type: gui {
     
     display  chart {
   // plot amount of cells with more water than 20 units 
-  chart "myChart" type:series {
-    data "water cells" value: cell count (each.grid_value > 20);
+  chart "Water Cells Over 100" type:series {
+    data "water cells" value: cell count (each.grid_value > 100);
   }
 }
 
 display  amount_of_water {
   // plot the total volume of water in the study area  
-  chart "Amount of water" type:series {
-    data "water volume" value: sum(cell collect each.grid_value);
+  chart "Amount of water (Natural Log Scale)" type:series {
+    data "Water volume" value: log(sum(cell collect each.grid_value)) color: #blue;
   }
 }
   }

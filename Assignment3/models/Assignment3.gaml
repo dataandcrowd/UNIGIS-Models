@@ -20,6 +20,15 @@ global {
 	//Shape of the world initialized as the bounding box around the walls
 	geometry shape <- envelope(wall_shapefile);
 	
+	//------------------------------------------------------------//
+	//perception distance
+	float perception_distance <- 15.0 parameter: true;
+	
+	//precision used for the masked_by operator (default value: 120): the higher the most accurate the perception will be, but it will require more computation
+	int precision <- 30 parameter: true;
+	//------------------------------------------------------------//
+	
+	
 	init {
 		//Creation of the wall and initialization of the cell is_wall attribute
 		create wall from: wall_shapefile {
@@ -57,11 +66,15 @@ species exit {
 //Species which represent the wall
 species wall {
 	aspect default {
-		draw shape color: #black depth: 10;
+		draw shape color: #sandybrown depth: 10;
 	}
 }
 //Species which represent the people moving from their location to an exit using the skill moving
 species people skills: [moving]{
+	//zone of perception
+	geometry perceived_area;
+	
+	
 	//Evacuation point
 	point target;
 	rgb color <- rnd_color(255);
@@ -75,20 +88,39 @@ species people skills: [moving]{
 			do die;
 		}
 	}
+	
+	reflex update_perception {
+		//the agent perceived a cone (with an amplitude of 60°) at a distance of  perception_distance (the intersection with the world shape is just to limit the perception to the world)
+		perceived_area <- (cone(heading-30,heading+30) intersection world.shape) intersection circle(perception_distance); 
+		
+		//if the perceived area is not nil, we use the masked_by operator to compute the visible area from the perceived area according to the obstacles
+		if (perceived_area != nil) {
+			perceived_area <- perceived_area masked_by (wall,precision);
+		}
+	}
+	
 	aspect default {
 		draw pyramid(2.5) color: color;
 		draw sphere(1) at: {location.x,location.y,2} color: color;
 	}
+	
+	aspect perception {
+		if (perceived_area != nil) {
+			draw perceived_area color: #honeydew;
+			draw circle(1) at: target color: #mediumvioletred;
+		}
+	}
+	
 }
-experiment evacuationgoto type: gui {
+experiment evacuation_with_vision type: gui {
 	float minimum_cycle_duration <- 0.04; 
 	output {
-		display map type: opengl{
+		display "Maps with Agent's vision" type: opengl{
 			image "../images/floor.jpg";
 			species wall refresh: false;
 			species exit refresh: false;
 			species people;
-			
+			species people aspect: perception transparency: 0.8;
 		}
 	}
 }
