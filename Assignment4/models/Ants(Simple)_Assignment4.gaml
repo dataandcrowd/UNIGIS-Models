@@ -12,14 +12,14 @@ model ants
 global {
 	int t <- 1;
 	//Evaporation value per cycle of the pheromons
-	float evaporation_per_cycle <- 5.0 min: 0.01 max: 240.0 ;
+	float evaporation_per_cycle <- 5.0 min: 0.5 max: 5.0 ;
 	//Diffusion rate of the pheromons
 	float diffusion_rate const: true <- 1.0 min: 0.0 max: 1.0 ;
 	//Size of the grid
 	int gridsize const: true <- 75; 
 	//Number of ants to create
 	//VH increasing the amount of ants
-	int ants_number  <- 200 min: 1 max: 600 parameter: 'Number of Ants:';
+	int ants_number  <- 1000 min: 1 max: 1000 parameter: 'Number of Ants:';
 	//Variable to keep information about the food remaining
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	//Center of the grid that will be considered as the nest of ants
@@ -139,6 +139,7 @@ experiment Simple type:gui {
 			event mouse_up action:click2;
 		}  
 	}
+	
 }
 
 // This experiment explores two parameters with an exhaustive strategy, 
@@ -152,9 +153,8 @@ experiment 'Exhaustive optimization' type: batch repeat: 2 keep_seed: true until
 
 // This experiment simply explores two parameters with an exhaustive strategy, 
 // repeating each simulation two times
-experiment Repeated type: batch repeat: 2 keep_seed: true until: (
-food_remaining = 0 ) or ( time > 400 ) {
-	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.1 , 1.0 , 2.0 , 5.0 ,  10.0 ];
+experiment Repeated type: batch repeat: 10 keep_seed: true until: food_remaining = 0  {
+	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
 	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
 }
 
