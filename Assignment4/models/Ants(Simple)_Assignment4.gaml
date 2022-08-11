@@ -148,7 +148,9 @@ experiment Simple type:gui {
 experiment Repeated type: batch repeat: 10 keep_seed: true until: food_remaining = 0  {
 	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
 	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
-	
+	reflex {
+		save [evaporation_per_cycle, diffusion_rate, ants_number, food_remaining] to: "sim_stat.csv" type: "csv" rewrite:false header:true;
+	}
 	// https://gama-platform.org/wiki/next/BatchExperiments
 	
 }
