@@ -142,31 +142,14 @@ experiment Simple type:gui {
 	
 }
 
-// This experiment explores two parameters with an exhaustive strategy, 
-// repeating each simulation two times, in order to find the best combination 
-// of parameters to minimize the time taken by ants to gather all the food
-experiment 'Exhaustive optimization' type: batch repeat: 2 keep_seed: true until: ( food_remaining = 0 ) or ( time > 400 ) {
-	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.1 , 1.0 , 2.0 , 5.0 ,  10.0 ];
-	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
-	//method exhaustive minimize: time;
-}
 
 // This experiment simply explores two parameters with an exhaustive strategy, 
-// repeating each simulation two times
+// repeating each simulation ten times
 experiment Repeated type: batch repeat: 10 keep_seed: true until: food_remaining = 0  {
 	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
 	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
+	
+	// https://gama-platform.org/wiki/next/BatchExperiments
+	
 }
 
-// This experiment explores two parameters with a GA strategy, 
-// repeating each simulation two times, in order to find the best combination 
-// of parameters to minimize the time taken by ants to gather all the food 
-experiment Genetic type: batch keep_seed: true repeat: 3 until: ( food_remaining
-= 0 ) or ( time > 400 ) {
-	parameter 'Evaporation' var: evaporation_per_cycle min: 0.05 max: 10.0
-	step: 0.1;
-	parameter 'Diffusion rate' var: diffusion_rate min: 0.0 max: 1.0 step:
-	0.01;
-	method genetic pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1
-	nb_prelim_gen: 1 max_gen: 20 minimize: time;
-}
