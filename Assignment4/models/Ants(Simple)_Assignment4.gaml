@@ -57,7 +57,10 @@ global {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
 
-} 
+}
+
+
+ 
 //Grid used to discretize space to place food in cells
 grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	bool isNestLocation  <- ( self distance_to center ) < 4;
@@ -67,6 +70,7 @@ grid ant_grid width: gridsize height: gridsize neighbors: 8 {
 	rgb color <- rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) , self.road * 30 , self.road > 15 ? 255 : food * 50 ]) update: rgb([ self.road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,self.road * 30 , self.road > 15 ? 255 : food * 50 ]); 
 	int food <- isFoodLocation ? 5 : 0; 
 	int nest const: true <- int(300 - ( self distance_to center ));
+	
 }
 
 //Species ant that will move
@@ -145,13 +149,17 @@ experiment Simple type:gui {
 
 // This experiment simply explores two parameters with an exhaustive strategy, 
 // repeating each simulation ten times
-experiment Repeated type: batch repeat: 10 keep_seed: true until: food_remaining = 0  {
-	parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
-	parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
-	reflex {
-		save [evaporation_per_cycle, diffusion_rate, ants_number, food_remaining] to: "sim_stat.csv" type: "csv" rewrite:false header:true;
-	}
-	// https://gama-platform.org/wiki/next/BatchExperiments
-	
+experiment Repeated type: batch repeat: 3 keep_seed: true until: food_remaining = 0  {
+        int cpt <- 0;
+        parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
+        parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
+        reflex {
+                save [evaporation_per_cycle, diffusion_rate, ants_number, food_remaining] to: "../results/sim_stat" + cpt + ".csv" type: "csv" rewrite:true header:true;
+                save ant_grid to: "../results/grid" + cpt + ".csv" type: csv;
+                //list<ant_grid_fin> <- ant_grid where (each.food > 0);
+                cpt <- cpt + 1;
+        }
+        // https://gama-platform.org/wiki/next/BatchExperiments
+        
 }
 
