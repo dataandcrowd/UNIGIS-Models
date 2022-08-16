@@ -57,6 +57,15 @@ global {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
 
+reflex save_result when: (food_remaining >= 0){
+          save ("cycle: "+ cycle + "; food_remaining: " + food_remaining) 
+	   		to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
+	}
+	
+	//reflex stop_simulation when: (food_remaining = 0) {
+	//	do pause;
+	// }
+ 
 }
 
 
@@ -143,22 +152,23 @@ experiment Simple type:gui {
 			event mouse_up action:click2;
 		}  
 	}
-	
 }
 
 
 // This experiment simply explores two parameters with an exhaustive strategy, 
 // repeating each simulation ten times
-experiment Repeated type: batch repeat: 3 keep_seed: true until: food_remaining = 0  {
+experiment Repeated type: batch repeat: 2 keep_seed: true until: time > 500  {
         int cpt <- 0;
         parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
         parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
-        reflex {
-                save [evaporation_per_cycle, diffusion_rate, ants_number, food_remaining] to: "../results/sim_stat" + cpt + ".csv" type: "csv" rewrite:true header:true;
-                save ant_grid to: "../results/grid" + cpt + ".csv" type: csv;
-                //list<ant_grid_fin> <- ant_grid where (each.food > 0);
-                cpt <- cpt + 1;
-        }
+        
+        reflex save_result {
+          save [cycle, food_remaining] 
+	   		to: "../results/sim_stat" + cpt + ".csv" type: "csv" rewrite:true header:true;
+	   		cpt <- cpt + 1;
+	}
+        
+        
         // https://gama-platform.org/wiki/next/BatchExperiments
         
 }
