@@ -11,10 +11,12 @@ model Lions
 /* Insert your model definition here */
 
 global  {
+	int l_count <-0;
   init {
-    create lions number:5 {
-      age <- int(rnd(5));
+    create lions number:15 {
+      age <- 0;/*int(rnd(5));*/
       energy <- 100.0 ;
+      l_color <- rgb(255,0,0);
     }
   }
 }
@@ -23,10 +25,25 @@ global  {
 species lions {
   int age;
   float energy;
+  rgb l_color; 
+  
   
   aspect default {
-    draw circle (2) color: #orange;
+    draw circle (2) color: l_color;
   } 
+  
+  reflex change{
+  	if(rnd(4) > 2){
+  		l_color <- rgb(0,255,0);
+  	}
+  }
+  
+  
+  reflex age{
+  	age<-age+1;
+  }
+  
+  
 }
 
 
@@ -51,7 +68,9 @@ species zebras {
 }
 
 experiment mySimulation type: gui {
+	
   output    {
+ 
     display myMap type: opengl {
       species lions aspect:default;
     }
