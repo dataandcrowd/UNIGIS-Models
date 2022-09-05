@@ -57,14 +57,18 @@ global {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
 
-reflex save_result when: (food_remaining >= 0){
-          save ("cycle: "+ cycle + "; food_remaining: " + food_remaining) 
-	   		to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
-	}
-	
-	//reflex stop_simulation when: (food_remaining = 0) {
-	//	do pause;
-	// }
+//reflex save_result when: (food_remaining >= 0){
+//          save ("cycle: "+ cycle + "; food_remaining: " + food_remaining) 
+//	   		to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
+//	}
+
+reflex save_result {
+          save ("simu: " +  int(self) + "; evaporation_per_cycle: "+ evaporation_per_cycle + 
+          " ; diffusion_rate: " + diffusion_rate + " ; cycle: "+ cycle + "; food_remaining: " + food_remaining)
+               to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true: false;
+              // to: "../results/sim_stat" + rnd(2) + ".csv" type: "csv" rewrite:true header:true;
+    }
+    	
  
 }
 
@@ -157,19 +161,28 @@ experiment Simple type:gui {
 
 // This experiment simply explores two parameters with an exhaustive strategy, 
 // repeating each simulation ten times
-experiment Repeated type: batch repeat: 2 keep_seed: true until: time > 500  {
+
+/*Failed Experiment */
+//experiment Repeated type: batch repeat: 2 keep_seed: true until: time > 500  {
+//        int cpt <- 0;
+//       parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
+//        parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
+       
+//        reflex save_result {
+//          save [cycle, food_remaining] 
+//	   		to: "../results/sim_stat" + cpt + ".csv" type: "csv" rewrite:true header:true;
+//	   		cpt <- cpt + 1;
+//	}
+        // https://gama-platform.org/wiki/next/BatchExperiments
+//}
+
+
+experiment Repeated type: batch repeat: 2 keep_seed: true until: food_remaining <= 0.0 {
+
         int cpt <- 0;
         parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
         parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
         
-        reflex save_result {
-          save [cycle, food_remaining] 
-	   		to: "../results/sim_stat" + cpt + ".csv" type: "csv" rewrite:true header:true;
-	   		cpt <- cpt + 1;
-	}
-        
-        
-        // https://gama-platform.org/wiki/next/BatchExperiments
-        
 }
+
 
