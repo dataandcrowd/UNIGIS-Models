@@ -16,6 +16,10 @@ global  {
       age <- int(rnd(5));
       energy <- 100.0 ;
     }
+    
+    create zebras number:15 {
+    	age <- 5;
+    }
   }
 }
 
@@ -30,7 +34,7 @@ species lions {
 }
 
 
-species zebras {
+species zebras skills: [moving]{
   int age <- 0;
 
   reflex get_older {
@@ -39,6 +43,12 @@ species zebras {
       do die_of_age;
     }
   }
+  
+  // zebra behaviour: random movement
+  reflex moveAround {
+    do wander amplitude: 90.0 speed: 200.0 ;
+  }
+  
   
   action die_of_age {
     write "I am going to die!";
@@ -50,10 +60,14 @@ species zebras {
   }
 }
 
+
+
 experiment mySimulation type: gui {
   output    {
     display myMap type: opengl {
       species lions aspect:default;
+      species zebras aspect:default;
+      
     }
   }
 }
