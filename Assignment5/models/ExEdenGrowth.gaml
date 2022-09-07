@@ -12,11 +12,30 @@ model EXEdenGrowth
 
 
 global {
+	
+	
+	int treeA <- 1;  // The number of treeA
+	int treeB <- 2;  // The number of treeB
+	
+	// Environment
+	geometry shape <- rectangle(100, 100);
+	
+	
+	
 	init {
-        ask forest[50,50] {
+				
+        ask forest[20,50] {
+        	
+       
             is_seedling <- true;
             do germinate;
-        }       
+        }
+       // ask forest {
+       // 	hsiA <- 66 + location.x / 3; 
+       // 	hsiB <- 99 - location.x / 3;
+       // 	}
+        
+               
     }
 	
 	
@@ -82,7 +101,7 @@ experiment forestSim type: gui {
   output    {
  
     display xx type: opengl {
-      grid forest border: #white;
+      grid forest border: #black;
     }}}
     
     
