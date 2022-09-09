@@ -12,30 +12,40 @@ model EXEdenGrowth
 
 
 global {
-	
-	
-	int treeA <- 1;  // The number of treeA
-	int treeB <- 2;  // The number of treeB
-	
-	// Environment
-	geometry shape <- rectangle(100, 100);
-	
-	
-	
+	int number_of_trees <- 2;
+
 	init {
-				
-        ask forest[20,50] {
-        	
-       
-        ask forest {
-        	hsiA <- 66 + location.x / 3; 
-        	hsiB <- 99 - location.x / 3;
-        	}
-        
-               
+		create trees number: number_of_trees;
+		ask trees { 
+			ask forest {
+				is_seedling <- true;
+            	do germinate;
+			}
+		}
+	}
+	
+	reflex forest_expansion {
+    ask forest {do distribute;}
+    ask forest {do germinate;}
+    ask forest {do grow;}
+  }
+
+reflex stop_simulation when: cycle = 400 {
+    do pause ;
+    } 
+	
+	
+	
     }
-    }
-    }
+
+species trees {
+	aspect base {
+		draw circle(1) color: #green;
+	}
+	
+}
+
+    
 	
 grid forest width:100 height:100 {
 
@@ -43,13 +53,49 @@ grid forest width:100 height:100 {
     bool is_seedling <- false;
     int treeAge <- -1;
     int maxAge; 
-	}
+
+    action distribute  {    
+        if is_tree = true {
+            ask neighbors {
+                if is_tree = false {
+                    is_seedling <- true;
+                }
+            }
+        }   
+    
+    }
+
+action germinate {
+        if is_seedling = true and 80 > rnd (100){
+            is_tree <- true;
+            treeAge <- 0;
+            maxAge <- rnd(80,120);
+            color <- rgb([0,treeAge * 2,0]);
+            is_seedling <- false;
+        }
+    }   
+    
+    
+  action grow  {
+        if is_tree = true and treeAge < maxAge {
+            treeAge <- treeAge + 1;
+            color <- rgb([0,treeAge * 2,0]);
+        }
+        
+        if is_tree = true and treeAge >= maxAge {
+            is_tree <- false;
+            color <- #white;
+            treeAge <- -1;
+        }   
+    }
+}
 
 
 experiment forestSim type: gui {
 	
   output    {
  
-    display xx type: opengl {
+    display TheForest type: opengl {
       grid forest border: #black;
+      species trees aspect: base;
     }}}
