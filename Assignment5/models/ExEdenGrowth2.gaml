@@ -14,13 +14,11 @@ model EXEdenGrowth2
 global {
 
 
-
 	init {
 		forest treeA <- one_of(forest);
 		forest treeB <- one_of(forest);
 		
 		
-	
 			ask treeA {
 				is_seedling <- true;
             	do germinate;
@@ -56,7 +54,10 @@ grid forest width:100 height:100 {
     bool is_treeB <- false;
     
     int treeAge <- -1;
-    int maxAge; 
+    int maxAge;
+    int competitionAge;
+    
+     
 
     action distribute  {    
         if is_tree = true and is_treeA = true {
@@ -108,13 +109,15 @@ action germinate {
    action competition {
    	// here I can put a competition tab states the war between treeA and treeB
    if is_treeA = true and is_treeB = true {
-   	  if 70 >= rnd (100){
+   	competitionAge <- treeAge;
+   	  if (treeAge - competitionAge >= 5){
+   	  	if 70 >= rnd (100) {
    	  	is_treeB <- false;
    	  }
    	  else {
    	  	is_treeA <- false;
    	  }
-   } 
+   } }
    } 
     
     
