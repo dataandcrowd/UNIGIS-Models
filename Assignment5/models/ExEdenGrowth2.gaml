@@ -131,11 +131,11 @@ experiment forestSim type: gui {
 	
   output    {
  
-    display TheForest type: opengl {
+    display The_Forest type: opengl {
       grid forest border: #black;
       }
-   display Mydisplay {
-    chart "my_chart" type: series {
+   display Tree_Types {
+    chart "Tree Types" type: series {
             data "Tree A" value: length(forest where (each.is_treeA = true)) color: #red;
             data "Tree B" value: length(forest where (each.is_treeB = true)) color: #blue;
             }
