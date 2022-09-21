@@ -38,6 +38,9 @@ global {
     ask forest {do distribute;}
     ask forest {do germinate;}
     ask forest {do grow;}
+    
+    unknown var00 <- forest where (each.is_treeA = true);
+    write length(var00);
   }
 
 reflex stop_simulation when: cycle = 400 {
@@ -130,5 +133,11 @@ experiment forestSim type: gui {
  
     display TheForest type: opengl {
       grid forest border: #black;
-      
-    }}}
+      }
+   display Mydisplay {
+    chart "my_chart" type: series {
+            data "Tree A" value: length(forest where (each.is_treeA = true)) color: #red;
+            data "Tree B" value: length(forest where (each.is_treeB = true)) color: #blue;
+            }
+    }
+    }}
