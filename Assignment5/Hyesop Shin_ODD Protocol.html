@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Hyesop Shin">
+
+<title>Dynamic species distribution model: A Summarised ODD Protocol</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="Hyesop Shin_ODD Protocol_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Hyesop Shin_ODD Protocol_files/libs/quarto-html/quarto.js"></script>
+<script src="Hyesop Shin_ODD Protocol_files/libs/quarto-html/popper.min.js"></script>
+<script src="Hyesop Shin_ODD Protocol_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Hyesop Shin_ODD Protocol_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Hyesop Shin_ODD Protocol_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Hyesop Shin_ODD Protocol_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Dynamic species distribution model: A Summarised ODD Protocol</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Hyesop Shin </p>
+          </div>
+  </div>
+    
+    
+  </div>
+  
+
+</header>
+
+<p><u>The purpose of this agent-based model</u> is to examine the spatial and temporal patterns of tree growth and to make a preliminary estimate of tree competitions. <u>Specifically, we are addressing the following question</u>: how does trees grow and distribute in the environment in response to tree (nature) competitions.</p>
+<p><u>The model includes the following entities</u>: trees and land. The state variables and attributes characterising these entities are listed in <a href="#tbl-state-variable">Table&nbsp;1</a>. The environment is built on a grid of 100 x 100 tessellated patches. Unlike in the real world, seedlings can grow and spread with the same probability in this virtual space. Because it is a closed environment (rather than a taurus), the trees do not spread beyond the boundaries. There are two types of trees in this model (seedlings). I categorised them treeA and treeB for convenience of reference. Both trees are placed in a grid cell at random, but not in the same cell. Since they are seedlings, they are not allowed to move, which means that once they are rooted to the ground, their growth are dependent on the environment. As for the temporal and spatial resolution, a time step in the model represents a year and the simulation stops at the 400th cycle. There is no particular representation for the spatial resolution.</p>
+<div id="tbl-state-variable" class="anchored">
+<table class="table">
+<caption>Table 1: State Variable</caption>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Variables</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>is_tree</td>
+<td>true / false</td>
+</tr>
+<tr class="even">
+<td>is_treeA</td>
+<td>true / false</td>
+</tr>
+<tr class="odd">
+<td>is_treeB</td>
+<td>true / false</td>
+</tr>
+<tr class="even">
+<td>is_seedling</td>
+<td>true / false</td>
+</tr>
+<tr class="odd">
+<td>treeAge</td>
+<td>integer (starts with zero)</td>
+</tr>
+<tr class="even">
+<td>maxAge</td>
+<td>Somewhere between 80-120</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><u>The model’s most important processes, which are repeated at each time step,</u> are the updating of germination, growth, tree distribution, and competition with other tree types. Each tree germinates with a 75% chance within 5 years (i.e.&nbsp;cycles in the GAMA platform), and if successful, spreads using the von Neumann neighbourhood method. If tree types A and B overlap, there is a competition between them, but A will win by 70%.</p>
+<p><u>The most important design concepts of the model are</u>,</p>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
