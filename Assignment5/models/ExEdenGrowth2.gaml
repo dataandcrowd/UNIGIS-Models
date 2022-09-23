@@ -39,9 +39,22 @@ global {
     ask forest {do germinate;}
     ask forest {do grow;}
     
-    unknown var00 <- forest where (each.is_treeA = true);
-    write length(var00);
+
+    //save [no_of_treeA, no_of_treeB] to: "save_data.csv" type: csv;
+    
   }
+
+
+
+reflex save_result {
+	unknown list_of_treeA <- forest where (each.is_treeA = true);
+    unknown list_of_treeB <- forest where (each.is_treeB = true);
+    int no_of_treeA <- length(list_of_treeA);
+    int no_of_treeB <- length(list_of_treeB);
+	save ("cycle: "+ cycle + "; no_of_treeA: " + no_of_treeA + "; no_of_treeB: " + no_of_treeB)
+               to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true: false;
+    }
+    
 
 reflex stop_simulation when: cycle = 400 {
     do pause ;
@@ -128,13 +141,12 @@ action germinate {
 
 
 experiment forestSim type: gui {
-	
-  output    {
+	output    {
  
     display The_Forest type: opengl {
       grid forest border: #black;
       }
-   display Tree_Types {
+    display Tree_Types {
     chart "Tree Types" type: series {
             data "Tree A" value: length(forest where (each.is_treeA = true)) color: #red;
             data "Tree B" value: length(forest where (each.is_treeB = true)) color: #blue;
