@@ -1,9 +1,19 @@
 ---
-title: "Dynamic species distribution model: A Summarised ODD Protocol"
+title: "Assignment 5: Dynamic species distribution model"
 author: "Hyesop Shin"
 format: html
 editor: visual
 ---
+
+## How I extended the Eden growth model
+
+-   Creating `is_treeA` and `is_treeB` to germinate the seeds
+
+-   Switch the seedling function
+
+-   Adding competition between tree A and B
+
+## A Summarised ODD Protocol
 
 [The purpose of this agent-based model]{.underline} is to examine the spatial and temporal patterns of tree growth and to make a preliminary estimate of tree competitions. [Specifically, we are addressing the following question]{.underline}: how does trees grow and distribute in the environment in response to tree (nature) competitions.
 
@@ -22,4 +32,15 @@ editor: visual
 
 [The model's most important processes, which are repeated at each time step,]{.underline} are the updating of germination, growth, tree distribution, and competition with other tree types. Each tree germinates with a 75% chance within 5 years (i.e. cycles in the GAMA platform), and if successful, spreads using the von Neumann neighbourhood method. If tree types A and B overlap, there is a competition between them, but A will win by 70%.
 
-[The most important design concepts of the model are]{.underline},
+[The most important design concepts of the model are]{.underline}, Initialisation
+
+## Results
+
+![](models/snapshots/EXEdenGrowth2_model_display_The_Forest_size_990x1284_cycle_401_time_1663968479751.png){width="300"}
+
+![](models/snapshots/EXEdenGrowth2_model_display_Tree_Types_size_495x642_cycle_401_time_1663968447321.png){width="300"}
+
+no_of_treeA: 6396; no_of_treeB: 4945
+
+Interpret the result.
+Did I expect this result? Yes.

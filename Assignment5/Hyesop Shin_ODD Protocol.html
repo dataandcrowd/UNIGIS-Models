@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.0.36">
+<meta name="generator" content="quarto-0.9.649">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Hyesop Shin">
 
-<title>Dynamic species distribution model: A Summarised ODD Protocol</title>
+<title>Assignment 5: Dynamic species distribution model</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -28,7 +28,7 @@ ul.task-list{list-style: none;}
 <link href="Hyesop Shin_ODD Protocol_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
 
 
 </head>
@@ -41,7 +41,7 @@ ul.task-list{list-style: none;}
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Dynamic species distribution model: A Summarised ODD Protocol</h1>
+<h1 class="title">Assignment 5: Dynamic species distribution model</h1>
 </div>
 
 
@@ -61,6 +61,16 @@ ul.task-list{list-style: none;}
 
 </header>
 
+<section id="how-i-extended-the-eden-growth-model" class="level2">
+<h2 class="anchored" data-anchor-id="how-i-extended-the-eden-growth-model">How I extended the Eden growth model</h2>
+<ul>
+<li><p>Creating <code>is_treeA</code> and <code>is_treeB</code> to germinate the seeds</p></li>
+<li><p>Switch the seedling function</p></li>
+<li><p>Adding competition between tree A and B</p></li>
+</ul>
+</section>
+<section id="a-summarised-odd-protocol" class="level2">
+<h2 class="anchored" data-anchor-id="a-summarised-odd-protocol">A Summarised ODD Protocol</h2>
 <p><u>The purpose of this agent-based model</u> is to examine the spatial and temporal patterns of tree growth and to make a preliminary estimate of tree competitions. <u>Specifically, we are addressing the following question</u>: how does trees grow and distribute in the environment in response to tree (nature) competitions.</p>
 <p><u>The model includes the following entities</u>: trees and land. The state variables and attributes characterising these entities are listed in <a href="#tbl-state-variable">Table&nbsp;1</a>. The environment is built on a grid of 100 x 100 tessellated patches. Unlike in the real world, seedlings can grow and spread with the same probability in this virtual space. Because it is a closed environment (rather than a taurus), the trees do not spread beyond the boundaries. There are two types of trees in this model (seedlings). I categorised them treeA and treeB for convenience of reference. Both trees are placed in a grid cell at random, but not in the same cell. Since they are seedlings, they are not allowed to move, which means that once they are rooted to the ground, their growth are dependent on the environment. As for the temporal and spatial resolution, a time step in the model represents a year and the simulation stops at the 400th cycle. There is no particular representation for the spatial resolution.</p>
 <div id="tbl-state-variable" class="anchored">
@@ -101,30 +111,20 @@ ul.task-list{list-style: none;}
 </table>
 </div>
 <p><u>The model’s most important processes, which are repeated at each time step,</u> are the updating of germination, growth, tree distribution, and competition with other tree types. Each tree germinates with a 75% chance within 5 years (i.e.&nbsp;cycles in the GAMA platform), and if successful, spreads using the von Neumann neighbourhood method. If tree types A and B overlap, there is a competition between them, but A will win by 70%.</p>
-<p><u>The most important design concepts of the model are</u>,</p>
+<p><u>The most important design concepts of the model are</u>, Initialisation</p>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p><img src="models/snapshots/EXEdenGrowth2_model_display_The_Forest_size_990x1284_cycle_401_time_1663968479751.png" class="img-fluid" width="300"></p>
+<p><img src="models/snapshots/EXEdenGrowth2_model_display_Tree_Types_size_495x642_cycle_401_time_1663968447321.png" class="img-fluid" width="300"></p>
+<p>no_of_treeA: 6396; no_of_treeB: 4945</p>
+<p>Interpret the result. Did I expect this result? Yes.</p>
+</section>
 
 </main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {

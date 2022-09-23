@@ -134,9 +134,7 @@ action germinate {
    	  	is_treeA <- false;
    	  }
    } }
-   } 
-    
-    
+   }
 }
 
 
