@@ -178,7 +178,7 @@ experiment Simple type:gui {
 
 
 experiment Repeated type: batch repeat: 10 keep_seed: true until: food_remaining <= 0.0 {
-        parameter 'Evaporation' var: evaporation_per_cycle min: 1.0 max: 5.0 step: 1.0;
+        parameter 'Evaporation' var: evaporation_per_cycle min: 0.5 max: 5.0 step: 0.5;
 }
 
 

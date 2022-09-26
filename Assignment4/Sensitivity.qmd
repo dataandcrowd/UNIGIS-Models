@@ -23,7 +23,8 @@ experiment Repeated type: batch repeat: 2 keep_seed: true until: food_remaining 
 ```
 
 To export the file, we go all the way up to the `global` section and add the `save_result` section as follows:
-```javascript
+
+``` javascript
 reflex save_result {
           save ("simu:" +  int(self) + ";evaporation_per_cycle:" + evaporation_per_cycle + 
           ";cycle:"+ cycle + ";food_remaining:" + food_remaining)
@@ -50,7 +51,6 @@ cleaned <-
   ungroup
 ```
 
-
 ```{r echo=F, message=F}
 ## averaging the 
 cleaned %>% 
@@ -63,26 +63,23 @@ cleaned1 %>%
   geom_line(aes(group = evaporation, colour = evaporation)) 
 ```
 
-
 ```{r}
 cleaned %>% 
   select(-food_remaining) %>% 
   group_by(iteration, evaporation) %>% 
   summarise_all(list(max)) %>% 
   ungroup %>% 
-  mutate(iteration = rep(1:10, 5),
+  mutate(iteration = rep(1:10, 10),
          evaporation = as.factor(evaporation)) -> sim_end
 
 sim_end %>% 
   ggplot(aes(x = evaporation, y = cycle, fill = evaporation)) +
   geom_bar(stat = "identity") +
-  facet_wrap(~iteration) +
-  labs(title = "Ants Model: Time to reach food depletion", subtitle = "by evaporation parameters and iterations") +
-  theme(legend.position = "none")
+  facet_wrap(~iteration, scales = "free_y") +
+  labs(title = "Ants Model: Time to reach food depletion", 
+       subtitle = "by evaporation parameters and iterations") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
-
-
-
 
 ## The Full Code
