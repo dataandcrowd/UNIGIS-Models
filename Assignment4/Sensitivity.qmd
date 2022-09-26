@@ -1,0 +1,88 @@
+---
+title: "Assignment 4: Sensitivity Analysis"
+format: html
+editor: visual
+---
+
+## The Task
+
+The primary goal of this "Ants" simulation is to comprehend the parameterisation as well as the iterative process utilising '.gaml' codes.
+
+According to the instruction, this simulation only tests the evaporation parameter, which ranges from 1 to 5 by 1 increment.
+
+    Evaporation: 0.5, 1, 2, 3, 4, 5
+
+## How to parameterise in GAMA
+
+In GAMA, simply add an experiment to either visualise the simulation or run it in headless mode. It was only a few lines of code that needed to be changed.
+
+``` javascript
+experiment Repeated type: batch repeat: 2 keep_seed: true until: food_remaining <= 0.0 {
+        parameter 'Evaporation' var: evaporation_per_cycle min: 1.0 max: 5.0 step: 1.0;
+}
+```
+
+To export the file, we go all the way up to the `global` section and add the `save_result` section as follows:
+```javascript
+reflex save_result {
+          save ("simu:" +  int(self) + ";evaporation_per_cycle:" + evaporation_per_cycle + 
+          ";cycle:"+ cycle + ";food_remaining:" + food_remaining)
+               to: "../results/results.txt" type: "text" rewrite: false;
+    }
+```
+
+## Results
+
+```{r echo=F, message=F}
+library(tidyverse)
+result <- read_delim("results/results.txt", delim = ";", col_names = FALSE)
+
+cleaned <- 
+  result %>% 
+  mutate(
+    iteration = result$X1 %>% str_sub(6) %>% as.numeric(),
+    evaporation = result$X2 %>% str_sub(23) %>% as.numeric(),
+    cycle = result$X3 %>% str_sub(7,10) %>% as.numeric(),
+    food_remaining = result$X4 %>% str_sub(16,20) %>% as.numeric()
+  ) %>% 
+  select(iteration, evaporation, cycle, food_remaining) %>%  # clean variables
+  arrange(iteration) %>% 
+  ungroup
+```
+
+
+```{r echo=F, message=F}
+## averaging the 
+cleaned %>% 
+  group_by(evaporation, cycle) %>% 
+  summarise(food_remaining = mean(food_remaining)) -> cleaned1
+
+cleaned1 %>% 
+  mutate(evaporation = as.factor(evaporation)) %>% 
+  ggplot(aes(x = cycle, y = food_remaining)) +
+  geom_line(aes(group = evaporation, colour = evaporation)) 
+```
+
+
+```{r}
+cleaned %>% 
+  select(-food_remaining) %>% 
+  group_by(iteration, evaporation) %>% 
+  summarise_all(list(max)) %>% 
+  ungroup %>% 
+  mutate(iteration = rep(1:10, 5),
+         evaporation = as.factor(evaporation)) -> sim_end
+
+sim_end %>% 
+  ggplot(aes(x = evaporation, y = cycle, fill = evaporation)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~iteration) +
+  labs(title = "Ants Model: Time to reach food depletion", subtitle = "by evaporation parameters and iterations") +
+  theme(legend.position = "none")
+```
+
+
+
+
+
+## The Full Code

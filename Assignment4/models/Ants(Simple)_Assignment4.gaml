@@ -57,16 +57,16 @@ global {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
 
-//reflex save_result when: (food_remaining >= 0){
-//          save ("cycle: "+ cycle + "; food_remaining: " + food_remaining) 
-//	   		to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true : false;
-//	}
 
 reflex save_result {
-          save ("simu: " +  int(self) + "; evaporation_per_cycle: "+ evaporation_per_cycle + 
-          " ; diffusion_rate: " + diffusion_rate + " ; cycle: "+ cycle + "; food_remaining: " + food_remaining)
-               to: "../results/results.txt" type: "text" rewrite: (cycle = 0) ? true: false;
-              // to: "../results/sim_stat" + rnd(2) + ".csv" type: "csv" rewrite:true header:true;
+	// int(self): iteration
+	// evaporation_per_cycle: evaporation_per_cycle
+	// cycle = cycle
+	// food_remaining = food_remaining 
+          save ("simu:" +  int(self) + ";evaporation_per_cycle:" + evaporation_per_cycle + 
+          ";cycle:"+ cycle + ";food_remaining:" + food_remaining)
+               to: "../results/results.txt" type: "text" rewrite: false;
+               //to: "../results/results" + evaporation_per_cycle + ".txt" type: "text" rewrite: (cycle = 0) ? true: false;
     }
     	
  
@@ -177,12 +177,8 @@ experiment Simple type:gui {
 //}
 
 
-experiment Repeated type: batch repeat: 2 keep_seed: true until: food_remaining <= 0.0 {
-
-        int cpt <- 0;
-        parameter 'Evaporation' var: evaporation_per_cycle among: [ 0.5 , 1.0 , 2.0 , 5.0];
-        parameter 'Diffusion rate' var: diffusion_rate min: 0.1 max: 1.0 step:0.3;
-        
+experiment Repeated type: batch repeat: 10 keep_seed: true until: food_remaining <= 0.0 {
+        parameter 'Evaporation' var: evaporation_per_cycle min: 1.0 max: 5.0 step: 1.0;
 }
 
 
