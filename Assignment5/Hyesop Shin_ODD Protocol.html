@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.649">
+<meta name="generator" content="quarto-1.0.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -28,7 +28,7 @@ ul.task-list{list-style: none;}
 <link href="Hyesop Shin_ODD Protocol_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="Hyesop Shin_ODD Protocol_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -111,20 +111,48 @@ ul.task-list{list-style: none;}
 </table>
 </div>
 <p><u>The model’s most important processes, which are repeated at each time step,</u> are the updating of germination, growth, tree distribution, and competition with other tree types. Each tree germinates with a 75% chance within 5 years (i.e.&nbsp;cycles in the GAMA platform), and if successful, spreads using the von Neumann neighbourhood method. If tree types A and B overlap, there is a competition between them, but A will win by 70%.</p>
-<p><u>The most important design concepts of the model are</u>, Initialisation</p>
+<p><u>The model’s most important design concepts</u> are seedling competition and ageing. In terms of seedling competition, all cells that do not contain any trees have an equal probability of germination. However, if a tree has already grown in a cell and comes into contact with another tree seedling, we have a competition. Tree A has a 70% chance of beating tree B. When it comes to seedling ageing, if a tree reaches its maximum age, which is a random number between 80 and 120, it dies.</p>
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
-<p><img src="models/snapshots/EXEdenGrowth2_model_display_The_Forest_size_990x1284_cycle_401_time_1663968479751.png" class="img-fluid" width="300"></p>
-<p><img src="models/snapshots/EXEdenGrowth2_model_display_Tree_Types_size_495x642_cycle_401_time_1663968447321.png" class="img-fluid" width="300"></p>
-<p>no_of_treeA: 6396; no_of_treeB: 4945</p>
-<p>Interpret the result. Did I expect this result? Yes.</p>
+<p><a href="#fig-map">Figure&nbsp;1</a> shows the result after the 400th cycle of the simulation. The two seedling types are noticeable, as is the spread, and there are some signs of competition in between. <a href="#fig-graph">Figure&nbsp;2</a> depicts the temporal increase of trees graphically. Up until the 80th step, the increasing trend was very steep. This is when the competition and new germination comes into place. The temporal oscillations of the tree types appear to be similar. At the end of the simulation the number of trees A is 6,396 and the number of trees B is 4,945, where A is approximately 29% higher than B.</p>
+<div id="fig-map" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/EXEdenGrowth2_model_display_The_Forest_size_990x1284_cycle_401_time_1663968479751.png" class="img-fluid figure-img" width="321"></p>
+<p></p><figcaption class="figure-caption">Figure 1: Forest Status after Cycle 400. It shows that there a Competition between Tree A (green) and Tree B (Purple)</figcaption><p></p>
+</figure>
+</div>
+<div id="fig-graph" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/EXEdenGrowth2_model_display_Tree_Types_size_495x642_cycle_401_time_1663968447321.png" class="img-fluid figure-img" width="300"></p>
+<p></p><figcaption class="figure-caption">Figure 2: A Graphical Representation of Tree types A and B over time</figcaption><p></p>
+</figure>
+</div>
+<p>Since it was assumed that tree As would win the competition by 30%, tree As won the majority of the repetitions. However, depending on where the initial seedling was planted, the opposite was also observed. As a result, while tree As are statistically proven to have higher tolerance than their competitors, this may not always be the case.</p>
 </section>
 
 </main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
