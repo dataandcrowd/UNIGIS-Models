@@ -25,8 +25,10 @@ global {
 	float perception_distance <- 15.0 parameter: true;
 	
 	//precision used for the masked_by operator (default value: 120): the higher the most accurate the perception will be, but it will require more computation
-	int precision <- 30 parameter: true;
+	float precision <- 30 parameter: true;
 	//------------------------------------------------------------//
+	
+	int mean_distance_to_goal;
 	
 	
 	init {
@@ -48,8 +50,12 @@ global {
 			location <- one_of(cell where not each.is_wall).location;
 			//Target of the people agent is one of the possible exits
 			target <- one_of(cell where each.is_exit).location;
+		 }  	
+		   
+		   
+		   	
 		}
-	}
+	
 }
 //Grid species to discretize space
 grid cell width: nb_cols height: nb_rows neighbors: 8 {
@@ -74,15 +80,17 @@ species people skills: [moving]{
 	//zone of perception
 	geometry perceived_area;
 	
-	
 	//Evacuation point
 	point target;
 	rgb color <- rnd_color(255);
 	
+	
+		
 	//Reflex to move the agent 
 	reflex move {
 		//Make the agent move only on cell without walls
 		do goto target: target speed: 1.0 on: (cell where not each.is_wall) recompute_path: false;
+		
 		//If the agent is close enough to the exit, it dies
 		if (self distance_to target) < 2.0 {
 			do die;
@@ -91,7 +99,7 @@ species people skills: [moving]{
 	
 	reflex update_perception {
 		//the agent perceived a cone (with an amplitude of 60°) at a distance of  perception_distance (the intersection with the world shape is just to limit the perception to the world)
-		perceived_area <- (cone(heading-30,heading+30) intersection world.shape) intersection circle(perception_distance); 
+		perceived_area <- (cone(heading-45,heading+45) intersection world.shape) intersection circle(perception_distance); 
 		
 		//if the perceived area is not nil, we use the masked_by operator to compute the visible area from the perceived area according to the obstacles
 		if (perceived_area != nil) {
@@ -111,6 +119,16 @@ species people skills: [moving]{
 		}
 	}
 	
+	
+	
+	reflex update_mean_distance {
+		if (self distance_to target) >= 2.0 {
+			mean_distance_to_goal <- mean(self distance_to target);
+			
+		}
+	}
+	
+	
 }
 experiment evacuation_with_vision type: gui {
 	float minimum_cycle_duration <- 0.04; 
@@ -122,5 +140,10 @@ experiment evacuation_with_vision type: gui {
 			species people;
 			species people aspect: perception transparency: 0.8;
 		}
+		display cchart {
+		chart "Distance" type: series {
+            data "Mean Distance" value: mean_distance_to_goal color: #green;
+            //data "Tree B" value: length(forest where (each.is_treeB = true)) color: #blue;
+            }
 	}
-}
+}}

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-0.9.649">
+<meta name="generator" content="quarto-1.0.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -90,7 +90,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="Sensitivity_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="Sensitivity_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Sensitivity_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="Sensitivity_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="Sensitivity_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 
 
 </head>
@@ -119,9 +119,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <section id="the-task" class="level2">
 <h2 class="anchored" data-anchor-id="the-task">The Task</h2>
-<p>The primary goal of this “Ants” simulation is to comprehend the parameterisation as well as the iterative process utilising ‘.gaml’ codes.</p>
-<p>According to the instruction, this simulation only tests the evaporation parameter, which ranges from 1 to 5 by 1 increment.</p>
-<pre><code>Evaporation: 0.5, 1, 2, 3, 4, 5</code></pre>
+<p>The primary goal of this “Ants” simulation is to comprehend the parameterisation as well as the iterative process utilising ‘.gaml’ codes. The idea in this model is that once the ants has food they set to diffuse the pheromon to either create chemical trails from their nest to promising food sources or releasing ‘danger’ alerts to nearby ants. Here, the evaporation parameter is used to change the time of evaporating the scent of pheromon.</p>
+<p>According to the instruction, this simulation only tests the evaporation parameter, which ranges from 0.5 to 5 by 0.5 increment.</p>
+<pre><code>Evaporation: 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5</code></pre>
 </section>
 <section id="how-to-parameterise-in-gama" class="level2">
 <h2 class="anchored" data-anchor-id="how-to-parameterise-in-gama">How to parameterise in GAMA</h2>
@@ -138,44 +138,283 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="results" class="level2">
 <h2 class="anchored" data-anchor-id="results">Results</h2>
+<section id="clean-data" class="level3">
+<h3 class="anchored" data-anchor-id="clean-data">Clean data</h3>
+<p>Here is a glimpse of the data frame. It contains of four variables <code>iteration</code>, <code>evaporation</code>, <code>cycle</code>, and <code>food_remaining</code>. The values of iteration ranges between 0-9, evaporation between 0.5-5.0 by 0.5 increment, cycle between 0-400, and food_remaining between 0-21.</p>
 <div class="cell">
-
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<p><img src="Sensitivity_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
-</div>
-</div>
-<div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cleaned <span class="sc">%&gt;%</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>food_remaining) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iteration, evaporation) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(<span class="fu">list</span>(max)) <span class="sc">%&gt;%</span> </span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  ungroup <span class="sc">%&gt;%</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iteration =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">10</span>),</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">evaporation =</span> <span class="fu">as.factor</span>(evaporation)) <span class="ot">-&gt;</span> sim_end</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>sim_end <span class="sc">%&gt;%</span> </span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> evaporation, <span class="at">y =</span> cycle, <span class="at">fill =</span> evaporation)) <span class="sc">+</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>iteration, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ants Model: Time to reach food depletion"</span>, </span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"by evaporation parameters and iterations"</span>) <span class="sc">+</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="Sensitivity_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>result <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"results/results.txt"</span>, <span class="at">delim =</span> <span class="st">";"</span>, <span class="at">col_names =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>cleaned <span class="ot">&lt;-</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">iteration =</span> result<span class="sc">$</span>X1 <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="dv">6</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>(),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">evaporation =</span> result<span class="sc">$</span>X2 <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="dv">23</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>(),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cycle =</span> result<span class="sc">$</span>X3 <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="dv">7</span>,<span class="dv">10</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>(),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">food_remaining =</span> result<span class="sc">$</span>X4 <span class="sc">%&gt;%</span> <span class="fu">str_sub</span>(<span class="dv">16</span>,<span class="dv">20</span>) <span class="sc">%&gt;%</span> <span class="fu">as.numeric</span>()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(iteration, evaporation, cycle, food_remaining) <span class="sc">%&gt;%</span>  <span class="co"># clean variables</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(iteration) <span class="sc">%&gt;%</span> </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  ungroup</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>cleaned</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 30,912 × 4
+   iteration evaporation cycle food_remaining
+       &lt;dbl&gt;       &lt;dbl&gt; &lt;dbl&gt;          &lt;dbl&gt;
+ 1         0         0.5     0             21
+ 2         0         0.5     1             21
+ 3         0         0.5     2             21
+ 4         0         0.5     3             21
+ 5         0         0.5     4             21
+ 6         0         0.5     5             21
+ 7         0         0.5     6             21
+ 8         0         0.5     7             21
+ 9         0         0.5     8             21
+10         0         0.5     9             21
+# … with 30,902 more rows</code></pre>
 </div>
 </div>
 </section>
-<section id="the-full-code" class="level2">
-<h2 class="anchored" data-anchor-id="the-full-code">The Full Code</h2>
+<section id="food-remaining-by-cycle" class="level3">
+<h3 class="anchored" data-anchor-id="food-remaining-by-cycle">Food remaining by cycle</h3>
+<p>The first task is to understand how the evaporation affects the the time for food depletion. The 10 iterations were averaged for this outcome. <a href="#fig-evaporation">Figure&nbsp;1</a> demonstrates that the smallest parameter 0.5 extends food storage by the 1,356th time step. Parameters 1 and 1.5 have a similar effect keeping the food until the 740th time step, while 2 and above appear to be clustered between 250-400th time step.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="do">## averaging the model iteration</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cleaned <span class="sc">%&gt;%</span> </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(evaporation, cycle) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">food_remaining =</span> <span class="fu">mean</span>(food_remaining)) <span class="ot">-&gt;</span> cleaned1</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>cleaned1 <span class="sc">%&gt;%</span> </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">evaporation =</span> <span class="fu">as.factor</span>(evaporation)) <span class="sc">%&gt;%</span> </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> cycle, <span class="at">y =</span> food_remaining)) <span class="sc">+</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="fu">aes</span>(<span class="at">group =</span> evaporation, <span class="at">colour =</span> evaporation)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-evaporation" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Sensitivity_files/figure-html/fig-evaporation-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure 1: Time to food depletion by the evaporation parameter</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="testing-food-depletion-at-every-iteration." class="level3">
+<h3 class="anchored" data-anchor-id="testing-food-depletion-at-every-iteration.">Testing food depletion at every iteration.</h3>
+<p>Another interesting point is whether each iteration provides the same result. Indeed it does not show a consistent pattern. In <a href="#fig-iteration">Figure&nbsp;2</a>, it is shown that 0.5 significantly outweighed the time until food depletion in more than half of the executions. However, parameters 3 and above did not make a significant difference. As a result, it can be concluded that lower evaporation parameters slowed the time of food depletion in general, but this varied by iteration, and that higher parameter values did not make a significant difference in reaching food depletion.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cleaned <span class="sc">%&gt;%</span> </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>food_remaining) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(iteration, evaporation) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise_all</span>(<span class="fu">list</span>(max)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  ungroup <span class="sc">%&gt;%</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">iteration =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>, <span class="dv">10</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>         <span class="at">evaporation =</span> <span class="fu">as.factor</span>(evaporation)) <span class="ot">-&gt;</span> sim_end</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>sim_end <span class="sc">%&gt;%</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> evaporation, <span class="at">y =</span> cycle, <span class="at">fill =</span> evaporation)) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>) <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_wrap</span>(<span class="sc">~</span>iteration, <span class="at">scales =</span> <span class="st">"free_y"</span>) <span class="sc">+</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Ants Model: Time to reach food depletion"</span>, </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"by evaporation parameters and iterations"</span>) <span class="sc">+</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>,</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">90</span>, <span class="at">vjust =</span> <span class="fl">0.5</span>, <span class="at">hjust=</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-iteration" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="Sensitivity_files/figure-html/fig-iteration-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure 2: Time to reach food depletion by evaporation at each simulation run</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="the-full-gama-code" class="level2">
+<h2 class="anchored" data-anchor-id="the-full-gama-code">The Full GAMA Code</h2>
+<div class="sourceCode" id="cb8"><pre class="sourceCode java code-with-copy"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">/***</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">*</span> Name<span class="co">:</span> AntsSimple</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">*</span> Author<span class="co">:</span> WALLENTIN</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">*</span> Description<span class="co">:</span> </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">***/</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>model ants</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>global <span class="op">{</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> t <span class="op">&lt;-</span> <span class="dv">1</span><span class="op">;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Evaporation value per cycle of the pheromons</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> evaporation_per_cycle <span class="op">&lt;-</span> <span class="fl">5.0</span> min<span class="op">:</span> <span class="fl">0.5</span> max<span class="op">:</span> <span class="fl">5.0</span> <span class="op">;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Diffusion rate of the pheromons</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> diffusion_rate <span class="dt">const</span><span class="op">:</span> <span class="kw">true</span> <span class="op">&lt;-</span> <span class="fl">1.0</span> min<span class="op">:</span> <span class="fl">0.0</span> max<span class="op">:</span> <span class="fl">1.0</span> <span class="op">;</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Size of the grid</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> gridsize <span class="dt">const</span><span class="op">:</span> <span class="kw">true</span> <span class="op">&lt;-</span> <span class="dv">75</span><span class="op">;</span> </span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Number of ants to create</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">//VH increasing the amount of ants</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> ants_number  <span class="op">&lt;-</span> <span class="dv">1000</span> min<span class="op">:</span> <span class="dv">1</span> max<span class="op">:</span> <span class="dv">1000</span> parameter<span class="op">:</span> <span class="er">'</span>Number of Ants<span class="op">:</span><span class="er">'</span><span class="op">;</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Variable to keep information about the food remaining</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> food_remaining update<span class="op">:</span> <span class="fu">list</span> <span class="op">(</span> ant_grid <span class="op">)</span> <span class="fu">count</span> <span class="op">(</span> each <span class="op">.</span> <span class="fu">food</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="dv">10</span><span class="op">;</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Center of the grid that will be considered as the nest of ants</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    point center <span class="dt">const</span><span class="op">:</span> <span class="kw">true</span> <span class="op">&lt;-</span> <span class="op">{</span> <span class="fu">round</span> <span class="op">(</span> gridsize <span class="op">/</span> <span class="dv">2</span> <span class="op">)</span> <span class="op">,</span> <span class="fu">round</span> <span class="op">(</span> gridsize <span class="op">/</span> <span class="dv">2</span> <span class="op">)</span> <span class="op">};</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    matrix<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> types <span class="op">&lt;-</span> matrix<span class="op">&lt;</span><span class="dt">int</span><span class="op">&gt;</span> <span class="op">(</span><span class="fu">pgm_file</span> <span class="op">(</span> <span class="er">'</span><span class="op">../</span>images<span class="op">/</span>environment75x75_scarce<span class="op">.</span><span class="fu">pgm</span><span class="er">'</span> <span class="op">));</span> </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    geometry shape <span class="op">&lt;-</span> <span class="fu">square</span><span class="op">(</span>gridsize<span class="op">);</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    init <span class="op">{</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="co">//Creation of the ants placed in the nest</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        create ant number<span class="op">:</span> ants_number with<span class="op">:</span> <span class="op">[</span> location <span class="op">::</span> center <span class="op">];</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> </span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Different actions triggered by an user interaction</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>    action press </span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        point loc <span class="op">&lt;-</span> #user_location<span class="op">;</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>        list<span class="op">&lt;</span>ant<span class="op">&gt;</span> selected_agents <span class="op">&lt;-</span> ant <span class="fu">overlapping</span> <span class="op">(</span><span class="fu">circle</span><span class="op">(</span><span class="dv">10</span><span class="op">)</span> at_location #user_location<span class="op">);</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        <span class="fu">write</span><span class="op">(</span><span class="st">"press "</span> <span class="op">+</span> loc<span class="op">.</span><span class="fu">x</span> <span class="op">+</span> <span class="st">" "</span> <span class="op">+</span> loc<span class="op">.</span><span class="fu">y</span> <span class="op">+</span> <span class="st">" "</span><span class="op">+</span>selected_agents<span class="op">);</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    action release </span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        <span class="fu">write</span><span class="op">(</span><span class="st">"release"</span><span class="op">);</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    action click  </span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">write</span><span class="op">(</span><span class="st">"click"</span><span class="op">);</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    action click2   </span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>        <span class="fu">write</span><span class="op">(</span><span class="st">"click2"</span><span class="op">);</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to diffuse the pheromons among the grid</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>    reflex diffuse <span class="op">{</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>      diffuse <span class="dt">var</span><span class="op">:</span>road on<span class="op">:</span>ant_grid proportion<span class="op">:</span> diffusion_rate radius<span class="op">:</span><span class="dv">2</span> propagation<span class="op">:</span> gradient<span class="op">;</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>reflex save_result <span class="op">{</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    <span class="co">// int(self): iteration</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="co">// evaporation_per_cycle: evaporation_per_cycle</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    <span class="co">// cycle = cycle</span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>    <span class="co">// food_remaining = food_remaining </span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>          <span class="fu">save</span> <span class="op">(</span><span class="st">"simu:"</span> <span class="op">+</span>  <span class="dt">int</span><span class="op">(</span>self<span class="op">)</span> <span class="op">+</span> <span class="st">";evaporation_per_cycle:"</span> <span class="op">+</span> evaporation_per_cycle <span class="op">+</span> </span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>          <span class="st">";cycle:"</span><span class="op">+</span> cycle <span class="op">+</span> <span class="st">";food_remaining:"</span> <span class="op">+</span> food_remaining<span class="op">)</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>               to<span class="op">:</span> <span class="st">"../results/results.txt"</span> type<span class="op">:</span> <span class="st">"text"</span> rewrite<span class="op">:</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>               <span class="co">//to: "../results/results" + evaporation_per_cycle + ".txt" type: "text" rewrite: (cycle = 0) ? true: false;</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a><span class="co">//Grid used to discretize space to place food in cells</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>grid ant_grid width<span class="op">:</span> gridsize height<span class="op">:</span> gridsize neighbors<span class="op">:</span> <span class="dv">8</span> <span class="op">{</span></span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    bool isNestLocation  <span class="op">&lt;-</span> <span class="op">(</span> self distance_to center <span class="op">)</span> <span class="op">&lt;</span> <span class="dv">4</span><span class="op">;</span></span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    bool isFoodLocation <span class="op">&lt;-</span>  types<span class="op">[</span>grid_x <span class="op">,</span> grid_y<span class="op">]</span> <span class="op">=</span> <span class="dv">2</span><span class="op">;</span>       </span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    list<span class="op">&lt;</span>ant_grid<span class="op">&gt;</span> neighbours <span class="op">&lt;-</span> self neighbors_at <span class="dv">1</span><span class="op">;</span>  </span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>    <span class="dt">float</span> road <span class="op">&lt;-</span> <span class="fl">0.0</span> max<span class="op">:</span><span class="fl">240.0</span> update<span class="op">:</span> <span class="op">(</span>road<span class="op">&lt;=</span>evaporation_per_cycle<span class="op">)</span> <span class="op">?</span> <span class="fl">0.0</span> <span class="op">:</span> road<span class="op">-</span>evaporation_per_cycle<span class="op">;</span></span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a>    rgb color <span class="op">&lt;-</span> <span class="fu">rgb</span><span class="op">([</span> self<span class="op">.</span><span class="fu">road</span> <span class="op">&gt;</span> <span class="dv">15</span> <span class="op">?</span> <span class="dv">255</span> <span class="op">:</span> <span class="op">(</span> isNestLocation <span class="op">?</span> <span class="dv">125</span> <span class="op">:</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">,</span> self<span class="op">.</span><span class="fu">road</span> <span class="op">*</span> <span class="dv">30</span> <span class="op">,</span> self<span class="op">.</span><span class="fu">road</span> <span class="op">&gt;</span> <span class="dv">15</span> <span class="op">?</span> <span class="dv">255</span> <span class="op">:</span> food <span class="op">*</span> <span class="dv">50</span> <span class="op">])</span> update<span class="op">:</span> <span class="fu">rgb</span><span class="op">([</span> self<span class="op">.</span><span class="fu">road</span> <span class="op">&gt;</span> <span class="dv">15</span> <span class="op">?</span> <span class="dv">255</span> <span class="op">:</span> <span class="op">(</span> isNestLocation <span class="op">?</span> <span class="dv">125</span> <span class="op">:</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">,</span>self<span class="op">.</span><span class="fu">road</span> <span class="op">*</span> <span class="dv">30</span> <span class="op">,</span> self<span class="op">.</span><span class="fu">road</span> <span class="op">&gt;</span> <span class="dv">15</span> <span class="op">?</span> <span class="dv">255</span> <span class="op">:</span> food <span class="op">*</span> <span class="dv">50</span> <span class="op">]);</span> </span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> food <span class="op">&lt;-</span> isFoodLocation <span class="op">?</span> <span class="dv">5</span> <span class="op">:</span> <span class="dv">0</span><span class="op">;</span> </span>
+<span id="cb8-80"><a href="#cb8-80" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> nest <span class="dt">const</span><span class="op">:</span> <span class="kw">true</span> <span class="op">&lt;-</span> <span class="dt">int</span><span class="op">(</span><span class="dv">300</span> <span class="op">-</span> <span class="op">(</span> self distance_to center <span class="op">));</span></span>
+<span id="cb8-81"><a href="#cb8-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-82"><a href="#cb8-82" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-83"><a href="#cb8-83" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-84"><a href="#cb8-84" aria-hidden="true" tabindex="-1"></a><span class="co">//Species ant that will move</span></span>
+<span id="cb8-85"><a href="#cb8-85" aria-hidden="true" tabindex="-1"></a>species ant skills<span class="op">:</span> <span class="op">[</span> moving <span class="op">]</span> <span class="op">{</span>     </span>
+<span id="cb8-86"><a href="#cb8-86" aria-hidden="true" tabindex="-1"></a>    rgb color <span class="op">&lt;-</span> #red<span class="op">;</span></span>
+<span id="cb8-87"><a href="#cb8-87" aria-hidden="true" tabindex="-1"></a>    ant_grid place function<span class="op">:</span> <span class="fu">ant_grid</span> <span class="op">(</span> location <span class="op">);</span></span>
+<span id="cb8-88"><a href="#cb8-88" aria-hidden="true" tabindex="-1"></a>    bool hasFood <span class="op">&lt;-</span> <span class="kw">false</span><span class="op">;</span> </span>
+<span id="cb8-89"><a href="#cb8-89" aria-hidden="true" tabindex="-1"></a>    bool hasRoad <span class="op">&lt;-</span> <span class="kw">false</span> update<span class="op">:</span> place <span class="op">.</span> <span class="fu">road</span> <span class="op">&gt;</span> <span class="fl">0.05</span><span class="op">;</span></span>
+<span id="cb8-90"><a href="#cb8-90" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-91"><a href="#cb8-91" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to diffuse pheromon on the cell once the agent has food</span></span>
+<span id="cb8-92"><a href="#cb8-92" aria-hidden="true" tabindex="-1"></a>    reflex diffuse_road when<span class="op">:</span>hasFood<span class="op">=</span><span class="kw">true</span><span class="op">{</span></span>
+<span id="cb8-93"><a href="#cb8-93" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ant_grid</span><span class="op">(</span>location<span class="op">).</span><span class="fu">road</span> <span class="op">&lt;-</span> <span class="fu">ant_grid</span><span class="op">(</span>location<span class="op">).</span><span class="fu">road</span> <span class="op">+</span> <span class="fl">100.0</span><span class="op">;</span></span>
+<span id="cb8-94"><a href="#cb8-94" aria-hidden="true" tabindex="-1"></a>   <span class="op">}</span></span>
+<span id="cb8-95"><a href="#cb8-95" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to wander while the ant has no food</span></span>
+<span id="cb8-96"><a href="#cb8-96" aria-hidden="true" tabindex="-1"></a>    reflex wandering when<span class="op">:</span> <span class="op">(</span> <span class="op">!</span> hasFood <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> <span class="op">!</span> hasRoad <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> place <span class="op">.</span> <span class="fu">food</span> <span class="op">=</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-97"><a href="#cb8-97" aria-hidden="true" tabindex="-1"></a>        <span class="cf">do</span> wander amplitude<span class="op">:</span> <span class="fl">120.0</span> speed<span class="op">:</span> <span class="fl">1.0</span><span class="op">;</span></span>
+<span id="cb8-98"><a href="#cb8-98" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-99"><a href="#cb8-99" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to search  when the agent has no food nor pheromon road close</span></span>
+<span id="cb8-100"><a href="#cb8-100" aria-hidden="true" tabindex="-1"></a>    reflex looking when<span class="op">:</span> <span class="op">(</span> <span class="op">!</span> hasFood <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> hasRoad <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> place <span class="op">.</span> <span class="fu">food</span> <span class="op">=</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb8-101"><a href="#cb8-101" aria-hidden="true" tabindex="-1"></a>        list<span class="op">&lt;</span>ant_grid<span class="op">&gt;</span> list_places <span class="op">&lt;-</span> place <span class="op">.</span> <span class="fu">neighbours</span><span class="op">;</span></span>
+<span id="cb8-102"><a href="#cb8-102" aria-hidden="true" tabindex="-1"></a>        ant_grid goal <span class="op">&lt;-</span> list_places <span class="fu">first_with</span> <span class="op">(</span> each <span class="op">.</span> <span class="fu">food</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">);</span></span>
+<span id="cb8-103"><a href="#cb8-103" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> goal <span class="op">!=</span> nil <span class="op">{</span></span>
+<span id="cb8-104"><a href="#cb8-104" aria-hidden="true" tabindex="-1"></a>            location <span class="op">&lt;-</span> goal<span class="op">.</span><span class="fu">location</span> <span class="op">;</span> </span>
+<span id="cb8-105"><a href="#cb8-105" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb8-106"><a href="#cb8-106" aria-hidden="true" tabindex="-1"></a>            <span class="dt">int</span> min_nest <span class="op">&lt;-</span> <span class="op">(</span> list_places <span class="fu">min_of</span> <span class="op">(</span> each <span class="op">.</span> <span class="fu">nest</span> <span class="op">)</span> <span class="op">);</span></span>
+<span id="cb8-107"><a href="#cb8-107" aria-hidden="true" tabindex="-1"></a>            list_places <span class="op">&lt;-</span> list_places <span class="fu">sort</span> <span class="op">(</span> <span class="op">(</span> each <span class="op">.</span> <span class="fu">nest</span> <span class="op">=</span> min_nest <span class="op">)</span> <span class="op">?</span> each <span class="op">.</span> <span class="fu">road</span> <span class="op">:</span> <span class="fl">0.0</span> <span class="op">)</span> <span class="op">;</span></span>
+<span id="cb8-108"><a href="#cb8-108" aria-hidden="true" tabindex="-1"></a>            location <span class="op">&lt;-</span> <span class="fu">point</span> <span class="op">(</span> <span class="fu">last</span> <span class="op">(</span> list_places <span class="op">)</span> <span class="op">)</span> <span class="op">;</span></span>
+<span id="cb8-109"><a href="#cb8-109" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb8-110"><a href="#cb8-110" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-111"><a href="#cb8-111" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to take </span></span>
+<span id="cb8-112"><a href="#cb8-112" aria-hidden="true" tabindex="-1"></a>    reflex taking when<span class="op">:</span> <span class="op">(</span> <span class="op">!</span> hasFood <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> place <span class="op">.</span> <span class="fu">food</span> <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb8-113"><a href="#cb8-113" aria-hidden="true" tabindex="-1"></a>        hasFood <span class="op">&lt;-</span> <span class="kw">true</span> <span class="op">;</span></span>
+<span id="cb8-114"><a href="#cb8-114" aria-hidden="true" tabindex="-1"></a>        place <span class="op">.</span> <span class="fu">food</span> <span class="op">&lt;-</span> place <span class="op">.</span> <span class="fu">food</span> <span class="op">-</span> <span class="dv">1</span> <span class="op">;</span></span>
+<span id="cb8-115"><a href="#cb8-115" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-116"><a href="#cb8-116" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to make the ant return to the nest once it has food</span></span>
+<span id="cb8-117"><a href="#cb8-117" aria-hidden="true" tabindex="-1"></a>    reflex homing when<span class="op">:</span> <span class="op">(</span> hasFood <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> <span class="op">!</span> place <span class="op">.</span> <span class="fu">isNestLocation</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-118"><a href="#cb8-118" aria-hidden="true" tabindex="-1"></a>        <span class="cf">do</span> <span class="cf">goto</span> target<span class="op">:</span>center  speed<span class="op">:</span><span class="fl">1.0</span><span class="op">;</span></span>
+<span id="cb8-119"><a href="#cb8-119" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-120"><a href="#cb8-120" aria-hidden="true" tabindex="-1"></a>    <span class="co">//Reflex to drop food once the ant arrived at the nest</span></span>
+<span id="cb8-121"><a href="#cb8-121" aria-hidden="true" tabindex="-1"></a>    reflex dropping when<span class="op">:</span> <span class="op">(</span> hasFood <span class="op">)</span> <span class="fu">and</span> <span class="op">(</span> place <span class="op">.</span> <span class="fu">isNestLocation</span> <span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-122"><a href="#cb8-122" aria-hidden="true" tabindex="-1"></a>        hasFood <span class="op">&lt;-</span> <span class="kw">false</span> <span class="op">;</span></span>
+<span id="cb8-123"><a href="#cb8-123" aria-hidden="true" tabindex="-1"></a>        heading <span class="op">&lt;-</span> heading <span class="op">-</span> <span class="dv">180</span> <span class="op">;</span></span>
+<span id="cb8-124"><a href="#cb8-124" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-125"><a href="#cb8-125" aria-hidden="true" tabindex="-1"></a>    aspect <span class="kw">default</span> <span class="op">{</span></span>
+<span id="cb8-126"><a href="#cb8-126" aria-hidden="true" tabindex="-1"></a>        draw <span class="fu">circle</span><span class="op">(</span><span class="fl">2.0</span><span class="op">)</span> color<span class="op">:</span> color<span class="op">;</span></span>
+<span id="cb8-127"><a href="#cb8-127" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-128"><a href="#cb8-128" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-129"><a href="#cb8-129" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-130"><a href="#cb8-130" aria-hidden="true" tabindex="-1"></a><span class="co">//Experiment simple to display ant and have user interaction</span></span>
+<span id="cb8-131"><a href="#cb8-131" aria-hidden="true" tabindex="-1"></a>experiment Simple type<span class="op">:</span>gui <span class="op">{</span></span>
+<span id="cb8-132"><a href="#cb8-132" aria-hidden="true" tabindex="-1"></a>    parameter <span class="er">'</span>Evaporation<span class="op">:</span><span class="er">'</span> <span class="dt">var</span><span class="op">:</span> evaporation_per_cycle<span class="op">;</span></span>
+<span id="cb8-133"><a href="#cb8-133" aria-hidden="true" tabindex="-1"></a>    parameter <span class="er">'</span>Diffusion Rate<span class="op">:</span><span class="er">'</span> <span class="dt">var</span><span class="op">:</span> diffusion_rate<span class="op">;</span></span>
+<span id="cb8-134"><a href="#cb8-134" aria-hidden="true" tabindex="-1"></a>    output <span class="op">{</span> </span>
+<span id="cb8-135"><a href="#cb8-135" aria-hidden="true" tabindex="-1"></a>        display Ants refresh<span class="op">:</span> <span class="fu">every</span><span class="op">(</span><span class="dv">2</span>#cycles<span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb8-136"><a href="#cb8-136" aria-hidden="true" tabindex="-1"></a>            grid ant_grid<span class="op">;</span></span>
+<span id="cb8-137"><a href="#cb8-137" aria-hidden="true" tabindex="-1"></a>            species ant aspect<span class="op">:</span> <span class="kw">default</span><span class="op">;</span></span>
+<span id="cb8-138"><a href="#cb8-138" aria-hidden="true" tabindex="-1"></a>            graphics <span class="er">'</span>displayText<span class="er">'</span> <span class="op">{</span></span>
+<span id="cb8-139"><a href="#cb8-139" aria-hidden="true" tabindex="-1"></a>                draw <span class="fu">string</span> <span class="op">(</span> food_remaining <span class="op">)</span> size<span class="op">:</span> <span class="fl">24.0</span> at<span class="op">:</span> <span class="op">{</span> <span class="dv">20</span> <span class="op">,</span> <span class="dv">20</span> <span class="op">}</span> color<span class="op">:</span> <span class="fu">rgb</span> <span class="op">(</span> <span class="er">'</span>white<span class="er">'</span> <span class="op">);</span></span>
+<span id="cb8-140"><a href="#cb8-140" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb8-141"><a href="#cb8-141" aria-hidden="true" tabindex="-1"></a>            <span class="co">//Event triggering the action passed in parameter</span></span>
+<span id="cb8-142"><a href="#cb8-142" aria-hidden="true" tabindex="-1"></a>            event mouse_down action<span class="op">:</span>press<span class="op">;</span></span>
+<span id="cb8-143"><a href="#cb8-143" aria-hidden="true" tabindex="-1"></a>            event mouse_up action<span class="op">:</span>release<span class="op">;</span></span>
+<span id="cb8-144"><a href="#cb8-144" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>  </span>
+<span id="cb8-145"><a href="#cb8-145" aria-hidden="true" tabindex="-1"></a>        display Ants_2 refresh<span class="op">:</span> <span class="fu">every</span><span class="op">(</span><span class="dv">2</span>#cycles<span class="op">)</span> <span class="op">{</span> </span>
+<span id="cb8-146"><a href="#cb8-146" aria-hidden="true" tabindex="-1"></a>            grid ant_grid<span class="op">;</span></span>
+<span id="cb8-147"><a href="#cb8-147" aria-hidden="true" tabindex="-1"></a>            graphics <span class="er">'</span>displayText<span class="er">'</span> <span class="op">{</span></span>
+<span id="cb8-148"><a href="#cb8-148" aria-hidden="true" tabindex="-1"></a>                draw <span class="fu">string</span> <span class="op">(</span> food_remaining <span class="op">)</span> size<span class="op">:</span> <span class="fl">24.0</span> at<span class="op">:</span> <span class="op">{</span> <span class="dv">20</span> <span class="op">,</span> <span class="dv">20</span> <span class="op">}</span> color<span class="op">:</span> <span class="fu">rgb</span> <span class="op">(</span> <span class="er">'</span>white<span class="er">'</span> <span class="op">);</span></span>
+<span id="cb8-149"><a href="#cb8-149" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb8-150"><a href="#cb8-150" aria-hidden="true" tabindex="-1"></a>            event mouse_down action<span class="op">:</span>press<span class="op">;</span></span>
+<span id="cb8-151"><a href="#cb8-151" aria-hidden="true" tabindex="-1"></a>            event mouse_up action<span class="op">:</span>click2<span class="op">;</span></span>
+<span id="cb8-152"><a href="#cb8-152" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span>  </span>
+<span id="cb8-153"><a href="#cb8-153" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-154"><a href="#cb8-154" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-155"><a href="#cb8-155" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-156"><a href="#cb8-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-157"><a href="#cb8-157" aria-hidden="true" tabindex="-1"></a>experiment Repeated type<span class="op">:</span> batch repeat<span class="op">:</span> <span class="dv">10</span> keep_seed<span class="op">:</span> <span class="kw">true</span> until<span class="op">:</span> food_remaining <span class="op">&lt;=</span> <span class="fl">0.0</span> <span class="op">{</span></span>
+<span id="cb8-158"><a href="#cb8-158" aria-hidden="true" tabindex="-1"></a>        parameter <span class="er">'</span>Evaporation<span class="er">'</span> <span class="dt">var</span><span class="op">:</span> evaporation_per_cycle min<span class="op">:</span> <span class="fl">0.5</span> max<span class="op">:</span> <span class="fl">5.0</span> step<span class="op">:</span> <span class="fl">0.5</span><span class="op">;</span></span>
+<span id="cb8-159"><a href="#cb8-159" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 
 </main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
   const icon = "";
   const anchorJS = new window.AnchorJS();
   anchorJS.options = {
