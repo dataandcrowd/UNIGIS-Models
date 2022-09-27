@@ -34,7 +34,9 @@ reflex save_result {
 
 ## Results
 
-```{r echo=F, message=F}
+### Clean data
+
+```{r message=F}
 library(tidyverse)
 result <- read_delim("results/results.txt", delim = ";", col_names = FALSE)
 
@@ -51,7 +53,12 @@ cleaned <-
   ungroup
 ```
 
-```{r echo=F, message=F}
+### Food remaining by cycle
+
+-   Average the remaining food based on the evaporation parameter
+-   What does this mean?
+
+```{r message=F}
 ## averaging the 
 cleaned %>% 
   group_by(evaporation, cycle) %>% 
@@ -62,6 +69,8 @@ cleaned1 %>%
   ggplot(aes(x = cycle, y = food_remaining)) +
   geom_line(aes(group = evaporation, colour = evaporation)) 
 ```
+
+### Testing food depletion at every iteration.
 
 ```{r}
 cleaned %>% 
