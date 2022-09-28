@@ -4,4 +4,32 @@ format: html
 editor: visual
 ---
 
-## What it is
+## Changes
+
+From the `Goto` model, I incorporated the `continuous field of vision` model by adding the code chunk below and modified the heading so that the agents can rotate the vision up to 90° as per the instruction.
+
+    //---GAMA Code--//
+
+        reflex update_perception {
+            //the agent perceived a cone (with an amplitude of 60°) at a distance of  perception_distance (the intersection with the world shape is just to limit the perception to the world)
+            perceived_area <- (cone(heading-45,heading+45) intersection world.shape) intersection circle(perception_distance); 
+            
+            //if the perceived area is not nil, we use the masked_by operator to compute the visible area from the perceived area according to the obstacles
+            if (perceived_area != nil) {
+                perceived_area <- perceived_area masked_by (wall,precision);
+            }
+        }
+
+Another change was to measure the mean distance of the agents. Although the instruction required to use the `collect` argument, after encountering a few trial and errors, I ended up assigning a global variable named `mean_distance_to_goal` so that I can illustrate the mean distance on the chart.
+
+Finally, I added a `stop_simulation` code that stops the simulation when all the agents leaves the room.
+
+## Interface
+
+![Map of the room](models/snapshots/evacuationgoto_model_display_Maps%20with%20Agent's%20vision_size_1200x1138_cycle_0_time_1664361809502.png){width="250" #fig-map}
+
+## Results
+@fig-graph illustrates the average distance between the agents' locations and the exit (target). The average distance among fifty agents began around 70 and increased to 90. Because the agents who started from the bottom left, where the Euclidean distance was closer to the exit, had to find an escape route that was further away from the exit, the mean distance increased. The mean distance quickly fell to 30 after it peaked. This is the first trough, as 12 agents have just exited or were preparing to exit the room. With a smaller group, the mean distance rose to 55 and then fell. The oscillation becomes smaller as the agents left the room.
+
+
+![The mean distance to goal over time and the number of agents who haven't escaped the room](models/snapshots/evacuationgoto_model_display_cchart_size_600x569_cycle_270_time_1664362435558.png){width="250" #fig-graph}

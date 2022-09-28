@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Evacuation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="evacuation_files/libs/clipboard/clipboard.min.js"></script>
+<script src="evacuation_files/libs/quarto-html/quarto.js"></script>
+<script src="evacuation_files/libs/quarto-html/popper.min.js"></script>
+<script src="evacuation_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="evacuation_files/libs/quarto-html/anchor.min.js"></script>
+<link href="evacuation_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="evacuation_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="evacuation_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="evacuation_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="evacuation_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Evacuation</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="changes" class="level2">
+<h2 class="anchored" data-anchor-id="changes">Changes</h2>
+<p>From the <code>Goto</code> model, I incorporated the <code>continuous field of vision</code> model by adding the code chunk below and modified the heading so that the agents can rotate the vision up to 90° as per the instruction.</p>
+<pre><code>//---GAMA Code--//
+
+    reflex update_perception {
+        //the agent perceived a cone (with an amplitude of 60°) at a distance of  perception_distance (the intersection with the world shape is just to limit the perception to the world)
+        perceived_area &lt;- (cone(heading-45,heading+45) intersection world.shape) intersection circle(perception_distance); 
+        
+        //if the perceived area is not nil, we use the masked_by operator to compute the visible area from the perceived area according to the obstacles
+        if (perceived_area != nil) {
+            perceived_area &lt;- perceived_area masked_by (wall,precision);
+        }
+    }</code></pre>
+<p>Another change was to measure the mean distance of the agents. Although the instruction required to use the <code>collect</code> argument, after encountering a few trial and errors, I ended up assigning a global variable named <code>mean_distance_to_goal</code> so that I can illustrate the mean distance on the chart.</p>
+<p>Finally, I added a <code>stop_simulation</code> code that stops the simulation when all the agents leaves the room.</p>
+</section>
+<section id="interface" class="level2">
+<h2 class="anchored" data-anchor-id="interface">Interface</h2>
+<div id="fig-map" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/evacuationgoto_model_display_Maps%20with%20Agent's%20vision_size_1200x1138_cycle_0_time_1664361809502.png" class="img-fluid figure-img" width="250"></p>
+<p></p><figcaption class="figure-caption">Figure 1: Map of the room</figcaption><p></p>
+</figure>
+</div>
+</section>
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p><a href="#fig-graph">Figure&nbsp;2</a> illustrates the average distance between the agents’ locations and the exit (target). The average distance among fifty agents began around 70 and increased to 90. Because the agents who started from the bottom left, where the Euclidean distance was closer to the exit, had to find an escape route that was further away from the exit, the mean distance increased. The mean distance quickly fell to 30 after it peaked. This is the first trough, as 12 agents have just exited or were preparing to exit the room. With a smaller group, the mean distance rose to 55 and then fell. The oscillation becomes smaller as the agents left the room.</p>
+<div id="fig-graph" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/evacuationgoto_model_display_cchart_size_600x569_cycle_270_time_1664362435558.png" class="img-fluid figure-img" width="250"></p>
+<p></p><figcaption class="figure-caption">Figure 2: The mean distance to goal over time and the number of agents who haven’t escaped the room</figcaption><p></p>
+</figure>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

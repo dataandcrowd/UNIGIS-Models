@@ -25,10 +25,13 @@ global {
 	float perception_distance <- 15.0 parameter: true;
 	
 	//precision used for the masked_by operator (default value: 120): the higher the most accurate the perception will be, but it will require more computation
-	float precision <- 30 parameter: true;
+	float precision <- 30.0 parameter: true;
 	//------------------------------------------------------------//
 	
-	int mean_distance_to_goal;
+	float  mean_distance_to_goal;
+	
+	int nb_people -> {length(people)};
+	
 	
 	
 	init {
@@ -51,10 +54,14 @@ global {
 			//Target of the people agent is one of the possible exits
 			target <- one_of(cell where each.is_exit).location;
 		 }  	
-		   
-		   
-		   	
-		}
+	}
+	
+	reflex stop_simulation when:nb_people = 0  {
+    do pause ;
+    } 
+     
+	
+	
 	
 }
 //Grid species to discretize space
@@ -123,7 +130,7 @@ species people skills: [moving]{
 	
 	reflex update_mean_distance {
 		if (self distance_to target) >= 2.0 {
-			mean_distance_to_goal <- mean(self distance_to target);
+		mean_distance_to_goal <- mean(self distance_to target);
 			
 		}
 	}
@@ -143,7 +150,7 @@ experiment evacuation_with_vision type: gui {
 		display cchart {
 		chart "Distance" type: series {
             data "Mean Distance" value: mean_distance_to_goal color: #green;
-            //data "Tree B" value: length(forest where (each.is_treeB = true)) color: #blue;
+            data "no of people" value: nb_people color: #blue;
             }
 	}
 }}

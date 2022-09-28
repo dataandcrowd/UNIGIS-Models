@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Water Runoff</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="waterfall_files/libs/clipboard/clipboard.min.js"></script>
+<script src="waterfall_files/libs/quarto-html/quarto.js"></script>
+<script src="waterfall_files/libs/quarto-html/popper.min.js"></script>
+<script src="waterfall_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="waterfall_files/libs/quarto-html/anchor.min.js"></script>
+<link href="waterfall_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="waterfall_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="waterfall_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="waterfall_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="waterfall_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Water Runoff</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="results" class="level2">
+<h2 class="anchored" data-anchor-id="results">Results</h2>
+<p>Cambridge is a city in the south-eastern part of the United Kingdom. The terrain is mostly flat and dry. As a result, flooding in and around the city is less likely. However, for the purposes of an experiment, this is a simulated result of what would happen if a waterfall affected the city (see <a href="#fig-map">Figure&nbsp;1</a>). As can be seen, the highest area is a cell in the bottom right corner, so the water fall would always begin there regardless of iterations.</p>
+<div id="fig-map" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/ExCellularAutomata_model_display_myMap_size_528x569_cycle_1001_time_1664379130403.png" class="img-fluid figure-img" width="250"></p>
+<p></p><figcaption class="figure-caption">Figure 1: Cambridge Map of the Run Off after 1000 time steps</figcaption><p></p>
+</figure>
+</div>
+<p><a href="#fig-graph1">Figure&nbsp;2</a> depicts the water’s lowest elevation over time. The starting altitude is 73 metres above sea level, but as the water flows, the lowest altitude drops dramatically to 20 metres around the 300th time step, 10 metres at the 500th time step, and finally 6-7 metres after the 600th time step.</p>
+<div id="fig-graph1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/ExCellularAutomata_model_display_Lowest_DEM_size_671x254_cycle_1001_time_1664379168656.png" class="img-fluid figure-img" width="400"></p>
+<p></p><figcaption class="figure-caption">Figure 2: Lowest DEM with water</figcaption><p></p>
+</figure>
+</div>
+<p>There are approximately 25,000 cells that contain water after 1000 time steps. As this map comprises 108,576 cells (312 x 348), it turns out that just over 23% of the spatial extent were affected by water run off.</p>
+<div id="fig-graph2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="models/snapshots/ExCellularAutomata_model_display_chart_size_671x254_cycle_1001_time_1664379166852.png" class="img-fluid figure-img" width="400"></p>
+<p></p><figcaption class="figure-caption">Figure 3: Cells that contained water</figcaption><p></p>
+</figure>
+</div>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

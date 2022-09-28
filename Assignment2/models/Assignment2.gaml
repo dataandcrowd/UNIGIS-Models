@@ -18,9 +18,8 @@ global {
 	// Undone task: I want to find the maximum value of the DEM file.
 	float highestcell <- cell max_of (each.grid_value);	
 	list<cell> newcell <- cell where (each.grid_value=highestcell) ;
-	
+	float lowestcell <- cell min_of (each.grid_value);	
  
-	//list<int> waterfall <- [(grid_x of newcell[1]), (grid_y of newcell[1])];
 	
 	
 	
@@ -41,16 +40,25 @@ global {
 		//	self.color <- rgb(r, g, b);
 		//}
 			
-		write "The agent with the maximum value of val is: " + highestcell;	
-		//write (grid_x of newcell[1]); write (grid_y of newcell[1]) ;
-		//write waterfall;
+		write "The highest altitude is: " + highestcell;	
+		write "The lowest altitude is " + lowestcell;
+		
 		
 		ask one_of (newcell){
-				self.color <- rgb(0,150,0);
-				grid_value <- 10000.0;
+				self.color <- rgb(0,250,0);
+				water <- 1000;
 					}
 		}
-reflex stop_simulation when: (time = 300) {
+		
+
+reflex lowest_dem_water {
+	float lowest_dem_with_water <- cell where (each.water > 0) min_of(each.grid_value);
+	write lowest_dem_with_water;
+	
+}
+		
+reflex stop_simulation when: (time = 1000) {
+	
     do pause ;
     }
 
@@ -60,20 +68,23 @@ reflex stop_simulation when: (time = 300) {
 
 
 grid cell file: dem_file {
+  int water;
+		
   // diffuse water
   reflex diffusion {
-    if grid_value > 150.0 {
+    if water > 150.0 {
       ask neighbors {
-        grid_value <- grid_value + 50;
-        myself.grid_value <- myself.grid_value - 50;
+      	if (myself.grid_value >= grid_value){
+        water <- water + 50;
+        myself.water <- myself.water - 25;
       }
-    }
+    }}
     
     do update_colour;
   } 
   // show grid values in shades of blue
   action update_colour {
-    color <- rgb([0,0,int(grid_value)]);    
+    color <- rgb([20,20,int(water)]);    
   
   
   }
@@ -88,15 +99,17 @@ experiment Runoff_Cambridge type: gui {
     
     display  chart {
   // plot amount of cells with more water than 20 units 
-  chart "Water Cells Over 100" type:series {
-    data "water cells" value: cell count (each.grid_value > 100);
+  chart "Water Cells with water" type:series {
+    data "water cells" value: cell count (each.water > 0);
+    
   }
 }
 
-display  amount_of_water {
+display  Lowest_DEM {
   // plot the total volume of water in the study area  
-  chart "Amount of water (Natural Log Scale)" type:series {
-    data "Water volume" value: log(sum(cell collect each.grid_value)) color: #blue;
+    chart "Lowest DEM" type:series {
+    //data "Water volume" value: log(sum(cell collect each.water)) color: #blue;
+    data "Lowest DEM" value: cell where (each.water > 0) min_of(each.grid_value) color:#green;
   }
 }
   }
