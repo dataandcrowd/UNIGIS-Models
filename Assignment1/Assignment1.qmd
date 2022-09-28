@@ -1,7 +1,7 @@
 ---
 title: "Assignment: Schelling Model in Cambridge"
-output: pdf_document
-date: '2022-07-11'
+format: html
+editor: visual
 ---
 
 ```{r setup, include=FALSE}
@@ -36,12 +36,13 @@ The `geojson` file was opened in QGIS and then exported as a `cambridge.shp` fil
 
 In the segregation model, there are two types of buildings coloured red and yellow. The idea of segregation is that the agents (here buildings) will self-segregate over time into clusters until the happpiness reaches 100%.
 
-The figure below is a snapshot of the GAMA interface waiting to get started. In the interface tab (middle), The chart on the top right shows the proportion of happiness which is a dichotomous in unhappy and happy state. The bottom right chart is a line graph that shows the happiness and similarity over time.
+@fig-interface is a snapshot of the GAMA interface waiting to get started. In the interface tab (middle), The chart on the top right shows the proportion of happiness which is a dichotomous in unhappy and happy state. The bottom right chart is a line graph that shows the happiness and similarity over time.
 
-## ![Interface of Cambridge using GAMA](snapshots/screenshot.png){width="480"}
+![Interface of Cambridge using GAMA](models/snapshots/screenshot.png){width="480" #fig-interface}
 
 ## Results
 
-From the figure below, you would see that the happiness reaches 100% after the fourth cycle. This means that each agent (building) has at least 50% of their surroundings with the same colour. The similarity did not reach 100% as their are voids (parks) which exceeded the agents' range of mobility.
+@fig-happiness shows that the happiness reaches 100% after the fourth cycle. This means that each agent (building) has at least 50% of their surroundings with the same colour. The similarity did not reach 100% as their are voids (parks) which exceeded the agents' range of mobility.
 
-![](images/paste-B845B7AA.png){width="480"}
+![Happiness](models/images/paste-B845B7AA.png){width="480" #fig-happiness}
+
