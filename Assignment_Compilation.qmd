@@ -1,9 +1,10 @@
 ---
-title: "Assignment"
+title: "UNIGIS Spatial Simulation Course: Assignments 1-5"
 author: "Hyesop Shin"
 format:
   pdf:
     toc: true
+    toc-depth: 2
     number-sections: true
     colorlinks: true
 editor: visual
@@ -52,3 +53,228 @@ In the segregation model, there are two types of buildings coloured red and yell
 @fig-happiness shows that the happiness reaches 100% after the fourth cycle. This means that each agent (building) has at least 50% of their surroundings with the same colour. The similarity did not reach 100% as their are voids (parks) which exceeded the agents' range of mobility.
 
 ![Happiness](Assignment1/models/images/paste-B845B7AA.png){#fig-happiness width="480"}
+
+
+<!-------------------------------------------->
+<!-------------------------------------------->
+
+# Assignment 2: Cellular Automata – hydrological run-off model
+## Maps
+
+Cambridge is a city in the south-eastern part of the United Kingdom. The terrain is mostly flat and dry. As a result, flooding in and around the city is less likely. However, for the purposes of an experiment, this is a simulated result of what would happen if a waterfall affected the city (see @fig-map). As can be seen, the highest area is a cell in the bottom right corner, so the water fall would always begin there regardless of iterations.
+
+![Cambridge Map of the Run Off after 1000 time steps](Assignment2/models/snapshots/ExCellularAutomata_model_display_myMap_size_528x569_cycle_1001_time_1664379130403.png){#fig-map width="250"}
+
+## Graphs
+@fig-graph1 depicts the water's lowest elevation over time. The starting altitude is 73 metres above sea level, but as the water flows, the lowest altitude drops dramatically to 20 metres around the 300th time step, 10 metres at the 500th time step, and finally 6-7 metres after the 600th time step.
+
+![Lowest DEM with water](Assignment2/models/snapshots/ExCellularAutomata_model_display_Lowest_DEM_size_671x254_cycle_1001_time_1664379168656.png){#fig-graph1 width="400"}
+
+There are approximately 25,000 cells that contain water after 1000 time steps. As this map comprises 108,576 cells (312 x 348), it turns out that just over 23% of the spatial extent were affected by water run off.
+
+![Cells that contained water](Assignment2/models/snapshots/ExCellularAutomata_model_display_chart_size_671x254_cycle_1001_time_1664379166852.png){#fig-graph2 width="400"}
+
+
+<!-------------------------------------------->
+<!-------------------------------------------->
+
+# Assignment 3: Evacuation Model
+
+## Code Changes
+
+From the `Goto` model, I incorporated the `continuous field of vision` model by adding the code chunk below and modified the heading so that the agents can rotate the vision up to 90° as per the instruction.
+
+```java
+reflex update_perception {
+    //the agent perceived a cone (with an amplitude of 60°) 
+    //at a distance of  perception_distance (the intersection with 
+    //the world shape is just to limit the perception to the world)
+            perceived_area <- (cone(heading-45,heading+45) 
+            intersection world.shape) intersection circle(perception_distance); 
+            
+  // if the perceived area is not nil, we use the masked_by operator 
+  // to compute the visible area from the perceived area according to the obstacles
+    if (perceived_area != nil) {
+        perceived_area <- perceived_area masked_by (wall,precision);
+        }}
+```
+
+Another change was to measure the mean distance of the agents. Although the instruction required to use the `collect` argument, after encountering a few trial and errors, I ended up assigning a global variable named `mean_distance_to_goal` so that I can illustrate the mean distance on the chart.
+
+Finally, I added a `stop_simulation` code that stops the simulation when all the agents leaves the room.
+
+## Interface
+
+![Map of the room](Assignment3/models/snapshots/evacuationgoto_model_display_Maps%20with%20Agent's%20vision_size_1200x1138_cycle_0_time_1664361809502.png){#fig-map width="300"}
+
+## Results
+
+@fig-graph illustrates the average distance between the agents' locations and the exit (target). The average distance among fifty agents began around 70 and increased to 90. Because the agents who started from the bottom left, where the Euclidean distance was closer to the exit, had to find an escape route that was further away from the exit, the mean distance increased. The mean distance quickly fell to 30 after it peaked. This is the first trough, as 12 agents have just exited or were preparing to exit the room. With a smaller group, the mean distance rose to 55 and then fell. The oscillation becomes smaller as the agents left the room.
+
+![The mean distance to goal over time and the number of agents who haven't escaped the room](Assignment3/models/snapshots/evacuationgoto_model_display_cchart_size_600x569_cycle_270_time_1664362435558.png){#fig-graph width="300"}
+
+
+<!-------------------------------------------->
+<!-------------------------------------------->
+
+# Assignment 4: Sensivity Analysis
+## The Task
+
+The primary goal of this "Ants" simulation is to comprehend the parameterisation as well as the iterative process utilising '.gaml' codes. The idea in this model is that once the ants has food they set to diffuse the pheromon to either create chemical trails from their nest to promising food sources or releasing 'danger' alerts to nearby ants. Here, the evaporation parameter is used to change the time of evaporating the scent of pheromon.
+
+According to the instruction, this simulation only tests the evaporation parameter, which ranges from 0.5 to 5 by 0.5 increment.
+
+    Evaporation: 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5
+
+## How to parameterise in GAMA
+
+In GAMA, simply add an experiment to either visualise the simulation or run it in headless mode. It was only a few lines of code that needed to be changed.
+
+``` javascript
+experiment Repeated type: batch repeat: 2 
+keep_seed: true until: food_remaining <= 0.0 {
+        parameter 'Evaporation' var: evaporation_per_cycle 
+        min: 1.0 max: 5.0 step: 1.0;
+}
+```
+
+To export the file, we go all the way up to the `global` section and add the `save_result` section as follows:
+
+``` javascript
+reflex save_result {
+          save ("simu:" +  int(self) + ";evaporation_per_cycle:" + 
+          evaporation_per_cycle + ";cycle:"+ cycle + 
+          ";food_remaining:" + food_remaining)
+          to: "../results/results.txt" type: "text" rewrite: false;
+    }
+```
+
+## Results
+
+### Clean data
+
+Here is a glimpse of the data frame. It contains of four variables `iteration`, `evaporation`, `cycle`, and `food_remaining`. The values of iteration ranges between 0-9, evaporation between 0.5-5.0 by 0.5 increment, cycle between 0-400, and food_remaining between 0-21.
+
+```{r message=F}
+library(tidyverse)
+result <- read_delim("Assignment4/results/results.txt", 
+                     delim = ";", col_names = FALSE)
+
+cleaned <- 
+  result %>% 
+  mutate(
+    iteration = result$X1 %>% str_sub(6) %>% as.numeric(),
+    evaporation = result$X2 %>% str_sub(23) %>% as.numeric(),
+    cycle = result$X3 %>% str_sub(7,10) %>% as.numeric(),
+    food_remaining = result$X4 %>% str_sub(16,20) %>% as.numeric()
+  ) %>% 
+  select(iteration, evaporation, cycle, food_remaining) %>%  # clean variables
+  arrange(iteration) %>% 
+  ungroup
+
+cleaned
+```
+
+### Food remaining by cycle
+
+The first task is to understand how the evaporation affects the the time for food depletion. The 10 iterations were averaged for this outcome. @fig-evaporation demonstrates that the smallest parameter 0.5 extends food storage by the 1,356th time step. Parameters 1 and 1.5 have a similar effect keeping the food until the 740th time step, while 2 and above appear to be clustered between 250-400th time step.
+
+```{r message=F}
+#| label: fig-evaporation
+#| fig-cap: Time to food depletion by the evaporation parameter 
+#| warning: false
+
+
+## averaging the model iteration
+cleaned %>% 
+  group_by(evaporation, cycle) %>% 
+  summarise(food_remaining = mean(food_remaining)) -> cleaned1
+
+cleaned1 %>% 
+  mutate(evaporation = as.factor(evaporation)) %>% 
+  ggplot(aes(x = cycle, y = food_remaining)) +
+  geom_line(aes(group = evaporation, colour = evaporation)) 
+```
+
+### Testing food depletion at every iteration.
+
+Another interesting point is whether each iteration provides the same result. Indeed it does not show a consistent pattern. In @fig-iteration, it is shown that 0.5 significantly outweighed the time until food depletion in more than half of the executions. However, parameters 3 and above did not make a significant difference. As a result, it can be concluded that lower evaporation parameters slowed the time of food depletion in general, but this varied by iteration, and that higher parameter values did not make a significant difference in reaching food depletion.
+
+```{r}
+#| label: fig-iteration
+#| fig-cap: Time to reach food depletion by evaporation at each simulation run
+#| warning: false
+
+cleaned %>% 
+  select(-food_remaining) %>% 
+  group_by(iteration, evaporation) %>% 
+  summarise_all(list(max)) %>% 
+  ungroup %>% 
+  mutate(iteration = rep(1:10, 10),
+         evaporation = as.factor(evaporation)) -> sim_end
+
+sim_end %>% 
+  ggplot(aes(x = evaporation, y = cycle, fill = evaporation)) +
+  geom_bar(stat = "identity") +
+  facet_wrap(~iteration, scales = "free_y") +
+  labs(title = "Ants Model: Time to reach food depletion", 
+       subtitle = "by evaporation parameters and iterations") +
+  theme(legend.position = "none",
+        axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+
+
+<!-------------------------------------------->
+<!-------------------------------------------->
+# Assignment 5: Dynamic species distribution model
+
+## How I extended the Eden growth model
+
+-   Creating `is_treeA` and `is_treeB` to germinate the seeds
+
+-   Switch the seedling function
+
+-   Adding competition between tree A and B
+
+## A Summarised ODD Protocol
+
+[The purpose of this agent-based model]{.underline} is to examine the spatial and temporal patterns of tree growth and to make a preliminary estimate of tree competitions. [Specifically, we are addressing the following question]{.underline}: how does trees grow and distribute in the environment in response to tree (nature) competitions.
+
+[The model includes the following entities]{.underline}: trees and land. The state variables and attributes characterising these entities are listed in @tbl-state-variable. The environment is built on a grid of 100 x 100 tessellated patches. Unlike in the real world, seedlings can grow and spread with the same probability in this virtual space. Because it is a closed environment (rather than a taurus), the trees do not spread beyond the boundaries. There are two types of trees in this model (seedlings). I categorised them treeA and treeB for convenience of reference. Both trees are placed in a grid cell at random, but not in the same cell. Since they are seedlings, they are not allowed to move, which means that once they are rooted to the ground, their growth are dependent on the environment. As for the temporal and spatial resolution, a time step in the model represents a year and the simulation stops at the 400th cycle. There is no particular representation for the spatial resolution.
+
+| Name        | Variables                  |
+|-------------|----------------------------|
+| is_tree     | true / false               |
+| is_treeA    | true / false               |
+| is_treeB    | true / false               |
+| is_seedling | true / false               |
+| treeAge     | integer (starts with zero) |
+| maxAge      | Somewhere between 80-120   |
+
+: State Variable {#tbl-state-variable}
+
+[The model's most important processes, which are repeated at each time step,]{.underline} are the updating of germination, growth, tree distribution, and competition with other tree types. Each tree germinates with a 75% chance within 5 years (i.e. cycles in the GAMA platform), and if successful, spreads using the von Neumann neighbourhood method. If tree types A and B overlap, there is a competition between them, but A will win by 70%.
+
+[The model's most important design concepts]{.underline} are seedling competition and ageing. In terms of seedling competition, all cells that do not contain any trees have an equal probability of germination. However, if a tree has already grown in a cell and comes into contact with another tree seedling, we have a competition. Tree A has a 70% chance of beating tree B. When it comes to seedling ageing, if a tree reaches its maximum age, which is a random number between 80 and 120, it dies.
+
+## Results
+
+@fig-map shows the result after the 400th cycle of the simulation. The two seedling types are noticeable, as is the spread, and there are some signs of competition in between. @fig-graph depicts the temporal increase of trees graphically. Up until the 80th step, the increasing trend was very steep. This is when the competition and new germination comes into place. The temporal oscillations of the tree types appear to be similar. At the end of the simulation the number of trees A is 6,396 and the number of trees B is 4,945, where A is approximately 29% higher than B.
+
+![Forest Status after Cycle 400. It shows that there a Competition between Tree A (green) and Tree B (Purple)](Assignment5/models/snapshots/EXEdenGrowth2_model_display_The_Forest_size_990x1284_cycle_401_time_1663968479751.png){#fig-map width="321"}
+
+![A Graphical Representation of Tree types A and B over time](Assignment5/models/snapshots/EXEdenGrowth2_model_display_Tree_Types_size_495x642_cycle_401_time_1663968447321.png){#fig-graph width="300"}
+
+Since it was assumed that tree As would win the competition by 30%, tree As won the majority of the repetitions. However, depending on where the initial seedling was planted, the opposite was also observed. As a result, while tree As are statistically proven to have higher tolerance than their competitors, this may not always be the case.
+
+
+# Acknowledgement{-}
+I thank Dr. Gudrun Wallentin and Christian Neuwirth for their kind support on my enquiries.
+
+# Data and Code{-}
+All of the data and code are stored in my GitHub repository \url{https://github.com/dataandcrowd/UNIGIS-Models}. You can use this to explore the data or run the simulation on your own computer.
+
+
+
+
